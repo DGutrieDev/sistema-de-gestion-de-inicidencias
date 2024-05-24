@@ -1,0 +1,8 @@
+{
+  "name": "Sistema de Gestion de Inicidencias",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "9cbc435e"
+}
