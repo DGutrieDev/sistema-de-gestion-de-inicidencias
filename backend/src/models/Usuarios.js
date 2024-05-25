@@ -34,7 +34,7 @@ const Usuarios = sequelize.define(
     },
     CT_Departamento: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       references:{
         model: Departamentos,
         key: "CT_id_Departamento"
