@@ -7,7 +7,7 @@ async function login(req, res) {
         const { usuario, password } = req.body;
 
         if (!usuario || !password) {
-            return res.status(400).json({ message: 'Usuario and password are required' });
+            return res.status(400).json({ message: 'Usuario y contraseña son requeridos' });
         }
 
         const usuario_existente = await Usuario.findOne({
@@ -25,8 +25,7 @@ async function login(req, res) {
                     user_id: usuario_existente.CT_cedula,
                     user_name: usuario_existente.CT_Nombre
                 },
-                process.env.TOKEN_SECRET,
-                { expiresIn: '5h' }
+                process.env.TOKEN_SECRET
             );
 
             return res.status(200).json({

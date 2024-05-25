@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('T_Incidencias', {
-      CT_cod_inicidencia: {
+      CT_cod_incidencia: {
         type: Sequelize.STRING(95),
         primaryKey: true,
         allowNull: false,

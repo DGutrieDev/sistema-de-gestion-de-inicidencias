@@ -10,7 +10,7 @@ const Prioridad = require('./Prioridades');
 const Incidencias = sequelize.define(
   "T_Incidencias",
   {
-    CT_cod_inicidencia: {
+    CT_cod_incidencia: {
       type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false,

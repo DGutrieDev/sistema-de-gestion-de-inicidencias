@@ -7,7 +7,7 @@ app.use(CORS());
 app.use(express.json());
 
 
-const verifyToken = require('../Auth/authMiddleware');
+const verifyToken = require('./src/Auth/authMiddleware');
 const loginRoute = require('./src/Controllers/LoginController');
 const RutasUsuarios = require('./src/Routes/UsuariosRoutes');
 
