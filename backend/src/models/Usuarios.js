@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Departamentos = require('./Departamentos');
-
 const Usuarios = sequelize.define(
   "T_Usuarios",
   {
@@ -32,14 +30,6 @@ const Usuarios = sequelize.define(
       allowNull: true,
       unique: true,
     },
-    CT_Departamento: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      references:{
-        model: Departamentos,
-        key: "CT_id_Departamento"
-      }
-    },
     CT_puesto: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -48,6 +38,5 @@ const Usuarios = sequelize.define(
   { timestamps: false }
 );
 
-Usuarios.hasOne(Departamentos,{foreignKey: "CT_id_Departamento"});
 
 module.exports = Usuarios;

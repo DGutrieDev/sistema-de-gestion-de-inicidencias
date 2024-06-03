@@ -4,20 +4,19 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('T_Roles', {
       CT_id_Rol: {
-        type: Sequelize.STRING(95),
-        primaryKey: true
+        type: Sequelize.STRING,
+        primaryKey: true,
       },
       CT_desc_rol: {
-        type: Sequelize.STRING(95),
-        allowNull: false
-      },      CT_nombre_sistema: {
-        type: Sequelize.STRING(95),
-        allowNull: true
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      CT_nombre_sistema: {
+        type: Sequelize.STRING,
       },
       CN_Activo: {
-        type: Sequelize.STRING(95),
-        allowNull: true
-      }
+        type: Sequelize.STRING,
+      },
     });
   },
 
