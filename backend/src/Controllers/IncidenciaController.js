@@ -1,5 +1,6 @@
 const sequelize = require('../../sequelize_config');
 const Incidencia = require('../models/incidencias');
+const { codIncidencias } = require('../utils/Functions');
 
 async function crearIncidencias(req, res) {
     try {
@@ -17,13 +18,13 @@ async function crearIncidencias(req, res) {
         }
         const incidenciaNueva = await Incidencia.create(incidencias);
         await sequelize.transaction(async (t) => {
-            await sequelize.query("Call crearIncidencia(:id_usuario, :cod_incidencia)", {
+            await sequelize.query("Call registrar_Incidencia(:id_usuario, :cod_incidencia)", {
                 replacements: {
                     id_usuario: usuario,
                     cod_incidencia: codIncidencias(val + 1)
                 },
                 transaction: t
-            });
+            }); 
         });
         res.status(201).json({ Mensaje: "Incidencia Creada", incidenciaNueva });
     } catch (err) {
@@ -63,13 +64,6 @@ async function obtenerIncidenciaUsuario(req, res) {
     } catch (err) {
         res.status(500).json({ Mensaje: 'Error al obtener las incidencias', error: err.message });
     }
-}
-
-function codIncidencias(n) {
-    const year = new Date().getFullYear().toString();
-    const cons = n.toString().padStart(6, '0');
-    const cod = `${year}-${cons}`;
-    return cod;
 }
 
 module.exports = { crearIncidencias, obtenerIncidencias, obtenerIncidenciaUsuario };

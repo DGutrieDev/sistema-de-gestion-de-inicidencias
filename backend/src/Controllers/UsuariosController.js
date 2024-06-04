@@ -67,7 +67,7 @@ async function asignarRoles(req, res) {
         const role = await Roles.findByPk(rol, { attributes: ['CT_desc_rol'] });
         const usuario = await Usuario.findByPk(cedula);
         if (usuario && role) {
-            await sequelize.query("Call AsignarRol(:id_usuario,:id_rol)", {
+            await sequelize.query("Call asignar_Rol(:id_usuario,:id_rol)", {
                 replacements: {
                     id_usuario: cedula,
                     id_rol: rol
@@ -105,7 +105,7 @@ async function revocarRol(req, res) {
         if (usuario_Rol.length === 0) {
             return res.status(400).json({ Mensaje: "El usuario no tiene asignado este rol" });
         }
-        await sequelize.query("CALL RevocarRol(:id_usuario, :id_rol)", {
+        await sequelize.query("CALL revocar_Rol(:id_usuario, :id_rol)", {
             replacements: {
                 id_usuario: cedula,
                 id_rol: rol
