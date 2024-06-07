@@ -1,6 +1,8 @@
 const sequelize = require('../../sequelize_config');
-const Incidencia = require('../models/incidencias');
-const { codIncidencias } = require('../utils/Functions');
+const Incidencia = require('../models/Incidencias');
+const UsuarioIncidenciaCreacion = require('../models/Usuario_Incidencia_Creacion');
+const Usuario = require('../models/Usuarios');
+const { codIncidencias } = require('../utils/Codes');
 
 async function crearIncidencias(req, res) {
     try {
@@ -17,14 +19,9 @@ async function crearIncidencias(req, res) {
             CF_Fecha_Hora: new Date(),
         }
         const incidenciaNueva = await Incidencia.create(incidencias);
-        await sequelize.transaction(async (t) => {
-            await sequelize.query("Call registrar_Incidencia(:id_usuario, :cod_incidencia)", {
-                replacements: {
-                    id_usuario: usuario,
-                    cod_incidencia: codIncidencias(val + 1)
-                },
-                transaction: t
-            }); 
+        await UsuarioIncidenciaCreacion.create({
+            CT_id_usuario: usuario,
+            CT_cod_incidencia: incidencias.CT_cod_incidencia
         });
         res.status(201).json({ Mensaje: "Incidencia Creada", incidenciaNueva });
     } catch (err) {
@@ -34,22 +31,56 @@ async function crearIncidencias(req, res) {
 
 async function obtenerIncidencias(req, res) {
     try {
-        const incidencias = await Incidencia.findAll();
-        res.status(200).json(incidencias);
-    } catch (err) {
-        res.status(500).json({ Mensaje: 'Error al obtener las incidencias', error: err.message });
-    }
+        const incidencias = await Incidencia.findAll({
+            include: [
+            {
+                model: UsuarioIncidenciaCreacion,
+                as: 'T_Usuario_Creacion_Incidencias',
+                include: [
+                    {
+                        model: Usuario,
+                        as: 'T_Usuario',
+                        attributes: ['CT_cedula', 'CT_nombre']
+                    }
+                ]
+            }
+        ]
+        });
+
+    const incidenciasConUsuario = incidencias.map(incidencia => {
+        const usuarioCreador = incidencia.T_Usuario_Creacion_Incidencias[0]?.T_Usuario;
+        const  incidenciaData = {
+            CT_cod_incidencia: incidencia.CT_cod_incidencia,
+            CT_titulo: incidencia.CT_titulo,
+            CT_descripcion: incidencia.CT_descripcion,
+            CT_lugar: incidencia.CT_lugar,
+            CF_Fecha_Hora: incidencia.CF_Fecha_Hora,
+            CN_Costo: incidencia.CN_Costo,
+            CT_Justificacion_cierre: incidencia.CT_Justificacion_cierre,
+            CF_Fecha_Estimada: incidencia.CF_Fecha_Estimada,
+            usuarioCreador: usuarioCreador ? {
+                CT_cedula: usuarioCreador.CT_cedula,
+                CT_nombre: usuarioCreador.CT_nombre
+            } : null
+        };
+        return exludeNull(incidenciaData);
+    });
+
+    res.status(200).json(incidenciasConUsuario);
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ Mensaje: 'Error al obtener las incidencias', error: err.message });
+}
 }
 
 async function obtenerIncidenciaUsuario(req, res) {
     try {
         const { usuario } = req.params;
-        console.log(usuario);
-        const [result] = await sequelize.query(
-            "SELECT CT_cod_incidencia FROM t_usuario_incidencia_creacion WHERE CT_id_usuario = :usuario",
-            { replacements: { usuario: usuario } }
-        );
-
+        const result = await UsuarioIncidenciaCreacion.findAll({
+            where: {
+                CT_id_usuario: usuario
+            }
+        });
         if (result.length > 0) {
             const codsIncidencias = result.map(incidencia => incidencia.CT_cod_incidencia);
             const incidencias = await Incidencia.findAll({

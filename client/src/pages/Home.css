@@ -1,0 +1,82 @@
+.Logo {
+  width: 150px;
+  margin-left: 60%;
+}
+
+.btn_menu {
+  margin-bottom: 30px;
+  color: rgb(0, 170, 217);
+}
+
+.container {
+  height: 100vh;
+  width: 100%;
+  padding: 15px;
+  padding-top: 0;
+}
+
+.container h1 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  color: rgb(0, 160, 205);
+}
+
+.custom-header {
+  height: 64px; 
+}
+
+.custom-toolbar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.opciones {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.402); 
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.opciones p {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgb(0, 160, 205);
+}
+
+.opciones span {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.opciones a {
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .opciones {
+    background-color: #424242;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn_menu{
+    color: rgb(0, 200, 255);
+  }
+
+  .opciones span {
+    color: #fff;
+  }
+
+  .container h1 {
+    color: rgb(0, 200, 255);
+  }
+
+  .opciones p{
+    color: rgb(0, 200, 255); 
+  }
+}

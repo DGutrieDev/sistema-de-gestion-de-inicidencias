@@ -1,6 +1,6 @@
 const sequelize = require('../../sequelize_config');
 const Diagnostico = require('../models/Diagnosticos');
-const { codDiagnostico } = require('../utils/Functions');
+const { codDiagnostico } = require('../utils/Codes');
 
 async function crearDiagnostico(req, res) {
     try {
