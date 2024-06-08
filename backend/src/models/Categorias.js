@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Categorias = sequelize.define("T_Categoria", {
+const Categorias = sequelize.define("T_Categorias", {
     CT_cod_categoria: {
         type: DataTypes.STRING,
         allowNull: false
@@ -11,10 +11,12 @@ const Categorias = sequelize.define("T_Categoria", {
         allowNull: false
     },
     CT_nombre_sistema: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'SGI'
     },
     CN_Activo: {
         type: DataTypes.STRING,
+        defaultValue: '1'
     }
 }, { timestamps: false });
 

@@ -1,12 +1,20 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent, IonIcon } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent, IonIcon, IonButton, IonModal } from '@ionic/react';
 import './Home.css';
 import Logo from '../assets/Logo UCR.png';
-import { addCircleOutline } from 'ionicons/icons';
+
+// Componentes de los Modal
+import RegistrarIncidencias from '../components/FormIncidencias';
+import RegistroDiagnosticos from '../components/FormDiagnostico';
+import AsignarIncidencias from '../components/FormAsignar';
 
 const Home: React.FC = () => {
     const [user, setUser] = useState<User | string | null>(null);
+    const [showRegistrarModal, setShowRegistrarModal] = useState(false);
+    const [showListarModal, setShowListarModal] = useState(false);
+    const [showAsignarModal, setShowAsignarModal] = useState(false);
+    const [showDiagnosticoModal, setShowDiagnosticoModal] = useState(false);
 
     async function getUser() {
         const id_usuario = localStorage.getItem("usuario");
@@ -26,12 +34,6 @@ const Home: React.FC = () => {
     useEffect(() => {
         getUser();
     }, []);
-
-    useEffect(() => {
-        if (user) {
-            console.log(user);
-        }
-    }, [user]);
 
     interface Role {
         CT_desc_rol: string;
@@ -56,54 +58,100 @@ const Home: React.FC = () => {
             <IonContent fullscreen>
                 <div className="container">
                     {user && typeof user !== 'string' && Array.isArray(user.roles) && user.roles.map((role: Role, index: number) => (
-                        <div className='role_options' key={index}>
-                            {role.CT_desc_rol === "Usuario" && (
+                        <React.Fragment key={index}>
+                            {role.CT_desc_rol === 'Usuario' && (
                                 <>
                                     <h1>{role.CT_desc_rol}</h1>
-                                    <div className="opciones">
-                                        <a href="/registro-incidencias">
-                                            <p>Registrar Incidencias</p>
-                                            <span>Reporta las incidencias para que sean atendidas</span>
-                                        </a>
+                                    <div className="op_container">
+                                        <div className="opciones">
+                                            <IonButton onClick={() => setShowRegistrarModal(true)} className='btn_modal' fill='clear'>
+                                                Registrar Incidencias
+                                            </IonButton>
+                                        </div>
                                     </div>
-                                    <div className="opciones">
-                                        <a href="/home">
-                                            <p>Listar Incidencias</p>
-                                            <span>Visualiza las incidencias que has creado</span>
-                                        </a>
-                                    </div>
+                                    <br />
                                 </>
-                            )}{role.CT_desc_rol === "Encargado" && (
+                            )}{role.CT_desc_rol === 'Tecnico' && (
                                 <>
                                     <h1>{role.CT_desc_rol}</h1>
-                                    <div className="opciones">
-                                        <a href="/home">
-                                            <p>Asignar Incidencias</p>
-                                            <span>Asigna una Incidencia a los tecnicos</span>
-                                        </a>
+                                    <div className="op_container">
+                                        <div className="opciones">
+                                            <IonButton onClick={() => setShowDiagnosticoModal(true)} className='btn_modal' fill='clear'>
+                                                Registrar Diagnóstico
+                                            </IonButton>
+                                        </div>
                                     </div>
+                                    <br />
                                 </>
-                            )}{role.CT_desc_rol === "Tecnico" && (
+                            )}{role.CT_desc_rol === 'Encargado' && (
                                 <>
                                     <h1>{role.CT_desc_rol}</h1>
-                                    <div className="opciones">
-                                        <a href="/home">
-                                            <p>Listar Incidencias</p>
-                                            <span>Visualiza las incidencias que tienes asignadas</span>
-                                        </a>
+                                    <div className="op_container">
+                                        <div className="opciones">
+                                            <IonButton onClick={() => setShowAsignarModal(true)} className='btn_modal' fill='clear'>
+                                                Asignar Incidencias
+                                            </IonButton>
+                                        </div>
                                     </div>
-                                    <div className="opciones">
-                                        <a href="/home">
-                                            <p>Registrar Diagnostico</p>
-                                            <span>Crea un diagnostico sobre una incidencia asignada</span>
-                                        </a>
-                                    </div>
+                                    <br />
                                 </>
                             )}
-                        </div>
+                        </React.Fragment>
                     ))}
                 </div>
             </IonContent>
+            <IonModal isOpen={showRegistrarModal} onDidDismiss={() => setShowRegistrarModal(false)}>
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Registro de Incidencias</IonTitle>
+                        <IonButtons slot="end">
+                            <IonButton onClick={() => setShowRegistrarModal(false)}>Cerrar</IonButton>
+                        </IonButtons>
+                    </IonToolbar>
+                </IonHeader>
+                <IonContent>
+                    <RegistrarIncidencias closeForm={() => setShowRegistrarModal(false)} />
+                </IonContent>
+            </IonModal>
+            <IonModal isOpen={showListarModal} onDidDismiss={() => setShowListarModal(false)}>
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Listar Incidencias</IonTitle>
+                        <IonButtons slot="end">
+                            <IonButton onClick={() => setShowListarModal(false)}>Cerrar</IonButton>
+                        </IonButtons>
+                    </IonToolbar>
+                </IonHeader>
+                <IonContent>
+                    {/* Content of Listar Incidencias modal */}
+                </IonContent>
+            </IonModal>
+            <IonModal isOpen={showAsignarModal} onDidDismiss={() => setShowAsignarModal(false)}>
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Asignar Incidencias</IonTitle>
+                        <IonButtons slot="end">
+                            <IonButton onClick={() => setShowAsignarModal(false)}>Cerrar</IonButton>
+                        </IonButtons>
+                    </IonToolbar>
+                </IonHeader>
+                <IonContent>
+                    <AsignarIncidencias closeForm={() => setShowAsignarModal(false)} />
+                </IonContent>
+            </IonModal>
+            <IonModal isOpen={showDiagnosticoModal} onDidDismiss={() => setShowDiagnosticoModal(false)}>
+                <IonHeader>
+                    <IonToolbar>
+                        <IonTitle>Registrar Diagnostico</IonTitle>
+                        <IonButtons slot="end">
+                            <IonButton onClick={() => setShowDiagnosticoModal(false)}>Cerrar</IonButton>
+                        </IonButtons>
+                    </IonToolbar>
+                </IonHeader>
+                <IonContent>
+                    <RegistroDiagnosticos closeForm={() => setShowDiagnosticoModal(false)} />
+                </IonContent>
+            </IonModal>
         </IonPage>
     );
 }

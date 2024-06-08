@@ -1,10 +1,10 @@
 import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonInput, IonPage, IonRow, IonToast } from "@ionic/react";
-import { personOutline, lockClosedOutline, time } from "ionicons/icons";
+import { personOutline, lockClosedOutline } from "ionicons/icons";
 import { useState } from "react";
 import { useHistory } from "react-router";
+import logo from '../assets/Logo UCR.png';
 import axios from 'axios';
 import './Login.css';
-import logo from '../assets/Logo UCR.png';
 
 const Login: React.FunctionComponent<{}> = () => {
     const [toastMessage, setToastMessage] = useState<string>('');
@@ -22,7 +22,6 @@ const Login: React.FunctionComponent<{}> = () => {
                 setToastStateColor('danger');
                 setToastMessage('Todos los campos son requeridos.');
                 setShowToast(true);
-                throw new Error('Por favor, complete todos los campos.');
             }
 
             const response = await axios.post('http://localhost:3000/api/login', {
@@ -37,11 +36,12 @@ const Login: React.FunctionComponent<{}> = () => {
                 setShowToast(true);
                 setTimeout(() => {
                     history.push('/home');
-                }, 2000);
+                }, 1000);
             }
-            console.log(response);
         } catch (error) {
-            console.log(error);
+            setToastStateColor('danger');
+            setToastMessage('Usuario o contraseña incorrectos.');
+            setShowToast(true);
         };
     };
     return (
@@ -57,7 +57,7 @@ const Login: React.FunctionComponent<{}> = () => {
                             <form className="login-form">
                                 <IonInput
                                     name="nombre_usuario"
-                                    className="input_fields" placeholder="Correo o Identificacion" required>
+                                    className="login_fields" placeholder="Correo o Identificacion">
                                     <div slot="label">
                                         <IonIcon icon={personOutline} className="icon"></IonIcon>
                                     </div>
@@ -65,7 +65,7 @@ const Login: React.FunctionComponent<{}> = () => {
                                 <IonInput
                                     name="contrasena_usuario"
                                     type="password"
-                                    className="input_fields" placeholder="Contraseña" required>
+                                    className="login_fields" placeholder="Contraseña">
                                     <div slot="label">
                                         <IonIcon icon={lockClosedOutline} className="icon"></IonIcon>
                                     </div>

@@ -9,13 +9,15 @@ const Riesgos = sequelize.define("T_Riesgos", {
     },
     CT_descrip_riesgo: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     CT_nombre_sistema: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'SGI'
     },
     CN_Activo: {
         type: DataTypes.STRING,
+        defaultValue: '1'
     }
 }, { timestamps: false });
 

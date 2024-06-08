@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
 .Logo {
   width: 150px;
-  margin-left: 60%;
+  margin-left: 55%;
 }
 
 .btn_menu {
@@ -11,15 +18,13 @@
 .container {
   height: 100vh;
   width: 100%;
-  padding: 15px;
-  padding-top: 0;
 }
 
 .container h1 {
   font-size: 24px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  margin-left: 25px;
   color: rgb(0, 160, 205);
 }
 
@@ -31,52 +36,47 @@
   height: 100%;
   display: flex;
   align-items: center;
-  padding: 0;
 }
 
-.opciones {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.402); 
-  padding: 12px;
-  margin-bottom: 20px;
+.op_container{
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
 }
 
-.opciones p {
-  font-size: 16px;
-  font-weight: 700;
-  color: rgb(0, 160, 205);
+.opciones{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 70px;
+  margin-bottom: 10px;
 }
 
-.opciones span {
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.6);
+.opciones:first-child{
+  margin-left: 15px;
 }
 
-.opciones a {
-  text-decoration: none;
+.btn_modal{
+  width: 100%;
+  height: 100%;
+  color: black;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.583);
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
 @media (prefers-color-scheme: dark) {
-  .opciones {
-    background-color: #424242;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .btn_menu{
-    color: rgb(0, 200, 255);
-  }
-
-  .opciones span {
+  .btn_menu {
     color: #fff;
   }
 
-  .container h1 {
-    color: rgb(0, 200, 255);
-  }
-
-  .opciones p{
-    color: rgb(0, 200, 255); 
+  .btn_modal{
+    color: #fff;
+    box-shadow: 0 0 6px 0 rgba(255, 255, 255, 0.583);
   }
 }

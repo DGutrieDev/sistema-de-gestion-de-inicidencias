@@ -5,7 +5,6 @@ import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import RegistroIncidencias from './pages/Registro_Incidencias';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -55,9 +54,6 @@ const App: React.FC = () => {
             <Route path="/login" exact={true} component={Login} />
             <Route path="/home" exact={true}>
               <Home />
-            </Route>
-            <Route path="/registro-incidencias" exact={true}>
-              <RegistroIncidencias />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>

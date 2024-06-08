@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Afectacion = sequelize.define("T_Afectacion", {
+const Afectacion = sequelize.define("T_Afectaciones", {
     CT_cod_afectacion: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -12,10 +12,12 @@ const Afectacion = sequelize.define("T_Afectacion", {
         allowNull: false
     },
     CT_nombre_sistema: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'SGI'
     },
     CN_Activo: {
         type: DataTypes.STRING,
+        defaultValue: '1'
     }
 }, { timestamps: false });
 

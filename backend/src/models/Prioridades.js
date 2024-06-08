@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Prioridades = sequelize.define("T_Prioridad", {
+const Prioridades = sequelize.define("T_Prioridades", {
     CT_cod_prioridad: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -12,10 +12,12 @@ const Prioridades = sequelize.define("T_Prioridad", {
         allowNull: false
     },
     CT_nombre_sistema: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'SGI'
     },
     CN_Activo: {
         type: DataTypes.STRING,
+        defaultValue: '1'
     }
 }, { timestamps: false });
 

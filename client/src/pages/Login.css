@@ -43,14 +43,14 @@
     position: fixed;
 }
 
-.input_fields{
+.login_fields{
     height: 50px;
     width: 85%;
     margin-left: 5px;
     border-bottom: 1px solid #ccc;
 }
 
-.input_fields:first-child{
+.login_fields:first-child{
     margin-bottom: 10px;
 }
 

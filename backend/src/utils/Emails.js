@@ -27,7 +27,7 @@ function emailRegistro(nombre_usuario, correo_usuario, contraseña_usuario) {
     transporter.sendMail(mailOptions);
 }
 
-function IncidenciaAsignada(usuario_destino, nombre_usuario, nombre_incidencia) {
+function EmailAsignacion(usuario_destino, nombre_usuario, nombre_incidencia) {
     const mailOptions = {
         from: process.env.EMAIL,
         to: usuario_destino,
@@ -59,4 +59,4 @@ function IncidenciaRegistrada(usuario_destino, cod_incidencia, nombre_usuario, n
     transporter.sendMail(mailOptions);
 }
 
-module.exports = { emailRegistro, IncidenciaAsignada, IncidenciaRegistrada }
+module.exports = { emailRegistro, EmailAsignacion, IncidenciaRegistrada }
