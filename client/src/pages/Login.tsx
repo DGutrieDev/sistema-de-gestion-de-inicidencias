@@ -28,6 +28,7 @@ const Login: React.FunctionComponent<{}> = () => {
                 usuario,
                 password
             });
+            localStorage.clear();
             localStorage.setItem('token', response.data.data.token);
             localStorage.setItem('usuario', response.data.data.id_usuario);
             if (response.status === 200) {

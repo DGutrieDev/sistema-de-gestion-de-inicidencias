@@ -95,7 +95,7 @@ const FormDiagnostico: React.FC<FormDiagnosticoProps> = ({ closeForm }) => {
                             <IonInput
                                 name='estimacion'
                                 className='input-fields'
-                                placeholder='Estimacion del tiempo de reparacion (en horas)'
+                                placeholder='Tiempo Estimado (en horas)'
                             ></IonInput>
                             <IonTextarea
                                 name='observaciones'
