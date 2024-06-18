@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol, IonSelect, IonSelectOption } from "@ionic/react";
+import { IonContent, IonButton, IonToast, IonPage, IonRow, IonCol, IonSelect, IonSelectOption } from "@ionic/react";
 import axios from "axios";
 import "../styles/formularios.css";
 

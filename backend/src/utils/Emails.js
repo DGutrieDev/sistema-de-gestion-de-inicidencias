@@ -55,7 +55,7 @@ function IncidenciaRegistrada(
     subject: "Incidencia Registrada",
     html: `
         <p>Estimado/a <strong>${nombre_usuario}</strong>,</p>
-        <p>La incidencia <strong>${cod_incidencia} ${nombre_incidencia}</strong> ha sido registrada correctamente</p>
+        <p>La incidencia <strong>${cod_incidencia} - ${nombre_incidencia}</strong> ha sido registrada correctamente</p>
         <p>Saludos cordiales,</p>
         <p>Equipo de soporte,SGI UCR</p>
       `,

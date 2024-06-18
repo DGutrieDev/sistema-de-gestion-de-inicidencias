@@ -1,288 +1,187 @@
 const sequelize = require("../../sequelize_config");
-const Incidencia = require("../models/Incidencias");
-const UsuarioIncidenciaCreacion = require("../models/Incidencias_creadas");
-const IncidenciaAsignada = require("../models/Incidencias_asignadas");
-const Usuario = require("../models/Usuarios");
-const Estado = require("../models/Estados");
+const Incidencias = require("../Models/Incidencias");
+const Incidencia_Usuario = require("../models/Incidencias_creadas");
+const Incidencia_Asignada = require("../models/Incidencias_asignadas");
+const usuarios = require("../models/Usuarios");
+const estados = require("../Models/Estados");
+const prioridad = require("../Models/Prioridades");
+
 const { codIncidencias } = require("../utils/Codes");
-const { EmailAsignacion, IncidenciaRegistrada } = require("../utils/Emails");
+const { IncidenciaRegistrada, EmailAsignacion } = require("../utils/Emails");
 
 async function crearIncidencias(req, res) {
   try {
-    const val = await Incidencia.count();
+    const num = await Incidencias.count();
     const { usuario, titulo, descrip, lugar } = req.body;
     if (!usuario || !titulo || !descrip || !lugar) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
+      return res.status(400).json({
+        error: true,
+        message: "Faltan datos para crear la incidencia",
+      });
     }
-    const usuarioExistente = await Usuario.findByPk(usuario);
-    const IncidenciaCreada = await Incidencia.create({
-      CT_cod_incidencia: codIncidencias(val+1),
+    await Incidencias.create({
+      CT_cod_incidencia: codIncidencias(num + 1),
       CT_titulo: titulo,
-      CT_descripcion: descrip,
+      CT_descrip: descrip,
       CT_lugar: lugar,
       CT_Estado: "1",
       CF_Fecha_Hora: new Date(),
     });
-    await UsuarioIncidenciaCreacion.create({
-      CT_cod_incidencia: IncidenciaCreada.CT_cod_incidencia,
-      CT_id_usuario: usuario,
-    });
+    const incidencia = await Incidencias.findByPk(num + 1);
+    if (incidencia) {
+      creacion(usuario, incidencia.CT_cod_incidencia);
+    }
+    const user = await usuarios.findByPk(usuario);
     IncidenciaRegistrada(
-      usuarioExistente.CT_usuario_institucional,
-      IncidenciaCreada.CT_cod_incidencia,
-      `${usuarioExistente.CT_nombre} ${usuarioExistente.CT_apellidoUno} ${usuarioExistente.CT_apellidoDos}`,
-      IncidenciaCreada.CT_titulo
+      user.CT_usuario_institucional,
+      incidencia.CT_cod_incidencia,
+      `${user.CT_nombre} ${user.CT_apellidoUno} ${user.CT_apellidoDos}`,
+      incidencia.CT_titulo
     );
-    res.status(201).json({ Mensaje: "Incidencia creada", IncidenciaCreada });
-  } catch (err) {
+  } catch (error) {
     res
       .status(500)
-      .json({ Mensaje: "Error al crear la incidencia", error: err.message });
+      .json({ error: true, message: "Error al crear la incidencia" });
   }
 }
 
-async function obtenerIncidenciaSinAsignar(req, res) {
+async function asignarIncidencia(req, res) {
   try {
-    const incidencias = await Incidencia.findAll({
-      where: {
-        CT_Estado: "1",
-      },
-    });
-    res.status(200).json(incidencias);
-  } catch (err) {
-    res.status(500).json({
-      Mensaje: "Error al obtener las incidencias",
-      error: err.message,
-    });
+    const { id_incidencia, id_usuario } = req.body;
+    if (!id_incidencia || !id_usuario) {
+      return res.status(400).json({
+        error: true,
+        message: "Faltan datos para asignar la incidencia",
+      });
+    }
+    asignar(id_usuario, id_incidencia);
+    const incidencia = await Incidencias.findByPk(id_incidencia);
+    const user = await usuarios.findByPk(id_usuario);
+    EmailAsignacion(
+      user.CT_usuario_institucional,
+      incidencia.CT_cod_incidencia,
+      `${user.CT_nombre} ${user.CT_apellidoUno} ${user.CT_apellidoDos}`,
+      incidencia.CT_titulo
+    );
+    res.status(200).json({ error: false, message: "Incidencia asignada" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: true, message: "Error al asignar la incidencia" });
   }
 }
 
-async function obtenerIncidencias(req, res) {
+// Incidencias Asignadas a un Tecnico
+async function obtenerIncidenciasAsignadas(req, res) {
   try {
-    const incidencias = await Incidencia.findAll({
-      attributes: [
-        "CT_cod_incidencia",
-        "CT_titulo",
-        "CT_descripcion",
-        "CT_lugar",
-        "CF_Fecha_Hora",
-      ],
+    const { id_usuario } = req.params;
+    await Incidencia_Asignada.findAll({
+      where: { id_usuario: id_usuario },
       include: [
         {
-          model: Estado,
-          attributes: ["CT_descrip_estado"],
-          where: {
-            CT_cod_estado: sequelize.col("T_Incidencias.CT_Estado"),
-          },
-        },
-        {
-          model: UsuarioIncidenciaCreacion,
-          attributes: ["CT_id_usuario"],
-          include: {
-            model: Usuario,
-          },
-        },
-        {
-          model: IncidenciaAsignada,
-          attributes: ["CT_cod_usuario"],
-          include: {
-            model: Usuario,
-          },
+          model: Incidencias,
+          as: "incidencia",
+          attributes: [
+            "CT_cod_incidencia",
+            "CT_titulo",
+            "CT_descrip",
+            "CT_lugar",
+            "CT_Estado",
+            "CF_Fecha_Hora",
+          ],
         },
       ],
     });
-    const formattedIncidencias = incidencias.map((incidencia) => {
-      return {
-        CT_cod_incidencia: incidencia.CT_cod_incidencia,
-        CT_titulo: incidencia.CT_titulo,
-        CT_descripcion: incidencia.CT_descripcion,
-        CT_lugar: incidencia.CT_lugar,
-        CF_Fecha_Hora: incidencia.CF_Fecha_Hora,
-        CT_Estado: incidencia.T_Estado.CT_descrip_estado,
-        T_Usuario_Creacion_Incidencias:
-          incidencia.T_Usuario_Creacion_Incidencias.map((usuario) => ({
-            CT_cedula: usuario.T_Usuario.CT_cedula,
-            CT_nombre: usuario.T_Usuario.CT_nombre,
-            CT_apellidoUno: usuario.T_Usuario.CT_apellidoUno,
-            CT_apellidoDos: usuario.T_Usuario.CT_apellidoDos,
-          })),
-        T_Asignaciones: incidencia.T_Asignaciones.map((asignacion) => ({
-          CT_cedula: asignacion.T_Usuario.CT_cedula,
-          CT_nombre: asignacion.T_Usuario.CT_nombre,
-          CT_apellidoUno: asignacion.T_Usuario.CT_apellidoUno,
-          CT_apellidoDos: asignacion.T_Usuario.CT_apellidoDos,
-        })),
-      };
-    });
-    res.status(200).json(formattedIncidencias);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({
-      Mensaje: "Error al obtener las incidencias",
-      error: err.message,
+      error: true,
+      message: "Error al obtener las incidencias asignadas",
     });
   }
 }
 
-async function obtenerIncidenciaUsuario(req, res) {
+// Incidencias Creadas por un Usuario
+async function obtenerIncidenciasCreadas(req, res) {
   try {
-    const { usuario } = req.params;
-    const result = await UsuarioIncidenciaCreacion.findAll({
-      where: {
-        CT_id_usuario: usuario,
-      },
-    });
-    if (result.length > 0) {
-      const codsIncidencias = result.map(
-        (incidencia) => incidencia.CT_cod_incidencia
-      );
-      const incidencias = await Incidencia.findAll({
-        where: {
-          CT_cod_incidencia: codsIncidencias,
+    const { id_usuario } = req.params;
+    await Incidencia_Usuario.findAll({
+      where: { id_usuario: id_usuario },
+      include: [
+        {
+          model: Incidencias,
+          as: "incidencia",
+          attributes: [
+            "CT_cod_incidencia",
+            "CT_titulo",
+            "CT_descrip",
+            "CT_lugar",
+            "CT_Estado",
+            "CF_Fecha_Hora",
+          ],
         },
-      });
-      res.status(200).json(incidencias);
-    } else {
-      res.status(404).json({
-        Mensaje: `No se encontraron incidencias para el usuario ${usuario}`,
-      });
-    }
-  } catch (err) {
+      ],
+    });
+  } catch (error) {
     res.status(500).json({
-      Mensaje: "Error al obtener las incidencias",
-      error: err.message,
+      error: true,
+      message: "Error al obtener las incidencias creadas",
     });
   }
 }
 
-async function obtenerIncidenciaAsignada(req, res) {
+// Todas las incidencias
+async function obtenerIncidencias(req, res) {
   try {
-    const { usuario } = req.params;
-    const result = await IncidenciaAsignada.findAll({
-      where: {
-        CT_cod_usuario: usuario,
-      },
-    });
-    if (result.length > 0) {
-      const codsIncidencias = result.map(
-        (incidencia) => incidencia.CT_id_incidencia
-      );
-      const incidencias = await Incidencia.findAll({
-        where: {
-          CT_cod_incidencia: codsIncidencias,
+    const incidencias = await Incidencias.findAll({
+      attributes: ['CT_cod_incidencia', 'CT_titulo', 'CT_descrip', 'CT_lugar', 'CT_Estado', 'CF_Fecha_Hora'],
+      include:[
+        {
+          model: estados,
+          attributes: ["CT_descrip_estado"]
         },
-      });
-      res.status(200).json(incidencias);
-    } else {
-      res.status(404).json({
-        Mensaje: `No se encontraron incidencias asignadas para el usuario ${usuario}`,
-      });
-    }
-  } catch (err) {
+        {
+          model: prioridad,
+          attributes: ["CT_descrip_prioridad"]
+        }
+      ]
+    });
+    res.status(200).json({ error: false, message: "Incidencias obtenidas", incidencias});
+  } catch (error) {
     res.status(500).json({
-      Mensaje: "Error al obtener las incidencias asignadas",
-      error: err.message,
+      error: true,
+      message: "Error al obtener las incidencias",
     });
   }
 }
 
-async function obtenerIncidenciaReparacion(req, res) {
+// Crear relacion Incidencia_Usuario
+function creacion(Idusuario, cod_Incidencia) {
   try {
-    const { usuario } = req.params;
-    const result = await IncidenciaAsignada.findAll({
-      where: {
-        CT_cod_usuario: usuario,
-      },
+    Incidencia_Usuario.create({
+      id_usuario: Idusuario,
+      cod_incidencia: cod_Incidencia,
     });
-    if (result.length > 0) {
-      const codsIncidencias = result.map(
-        (incidencia) => incidencia.CT_cod_incidencia
-      );
-      const incidencias = await Incidencia.findAll({
-        where: {
-          CT_cod_incidencia: codsIncidencias,
-        },
-        where: {
-          CT_Estado: "4",
-        },
-      });
-      res.status(200).json(incidencias);
-    } else {
-      res.status(404).json({
-        Mensaje: `No se encontraron incidencias para el usuario ${usuario}`,
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      Mensaje: "Error al obtener las incidencias",
-      error: err.message,
-    });
+  } catch (error) {
+    throw new Error("Error al crear la incidencia");
   }
 }
 
-async function asignarIncidencias(req, res) {
+// Crear relacion Incidencia_Asignada
+function asignar(Idusuario, cod_Incidencia) {
   try {
-    const { usuario, incidencia, riesgo, prioridad, afectacion, categoria } =
-      req.body;
-    if (!usuario || !incidencia) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
-    }
-    const usuarioExistente = await Usuario.findByPk(usuario);
-    const incidenciaExistente = await Incidencia.findByPk(incidencia);
-    if (!usuarioExistente || !incidenciaExistente) {
-      return res
-        .status(404)
-        .json({ Mensaje: "Usuario o incidencia no encontrados" });
-    }
-    const incidenciaAsignadaExistente = await IncidenciaAsignada.findOne({
-      where: {
-        CT_cod_usuario: usuario,
-        CT_id_incidencia: incidencia,
-      },
+    Incidencia_Asignada.create({
+      id_usuario: Idusuario,
+      cod_incidencia: cod_Incidencia,
     });
-    if (incidenciaAsignadaExistente) {
-      return res
-        .status(400)
-        .json({ Mensaje: "Incidencia ya asignada a ese usuario" });
-    }
-    const incidenciaAsignada = await IncidenciaAsignada.create({
-      CT_id_incidencia: incidencia,
-      CT_cod_usuario: usuario,
-    });
-    await Incidencia.update(
-      {
-        CT_Estado: "4",
-        CT_Prioridad: prioridad,
-        CT_Riesgo: riesgo,
-        CT_Afectacion: afectacion,
-        CT_Categoria: categoria,
-      },
-      {
-        where: {
-          CT_cod_incidencia: incidencia,
-        },
-      }
-    );
-    EmailAsignacion(
-      usuarioExistente.CT_usuario_institucional,
-      `${usuarioExistente.CT_nombre} ${usuarioExistente.CT_apellidoUno} ${usuarioExistente.CT_apellidoDos}`,
-      `${incidenciaExistente.CT_cod_incidencia} ${incidenciaExistente.CT_titulo}`
-    );
-    res
-      .status(201)
-      .json({ Mensaje: "Incidencia asignada", incidenciaAsignada });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ Mensaje: "Error al asignar la incidencia", error: err.message });
+  } catch (error) {
+    throw new Error("Error al asignar la incidencia");
   }
 }
 
 module.exports = {
   crearIncidencias,
-  asignarIncidencias,
+  obtenerIncidenciasAsignadas,
+  obtenerIncidenciasCreadas,
   obtenerIncidencias,
-  obtenerIncidenciaUsuario,
-  obtenerIncidenciaAsignada,
-  obtenerIncidenciaReparacion,
-  obtenerIncidenciaSinAsignar,
+  asignarIncidencia,
 };
