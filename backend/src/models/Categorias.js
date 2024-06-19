@@ -4,6 +4,7 @@ const sequelize = require("../../sequelize_config");
 const Categorias = sequelize.define("T_Categorias", {
     CT_cod_categoria: {
         type: DataTypes.STRING,
+        primaryKey: true,
         allowNull: false
     },
     CT_descrip_categ: {

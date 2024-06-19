@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Riesgos = sequelize.define("T_Riesgos", {
+const Riesgos = sequelize.define("T_Riesgo", {
     CT_cod_riesgo: {
         type: DataTypes.STRING,
         allowNull: false,

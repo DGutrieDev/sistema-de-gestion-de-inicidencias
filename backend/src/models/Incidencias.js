@@ -63,7 +63,7 @@ const Incidencias = sequelize.define(
       allowNull: true,
       references: {
         model: "T_Riesgos",
-        key: "CT_cod_Riesgo",
+        key: "CT_cod_riesgo",
       },
     },
     CT_Categoria: {
@@ -71,7 +71,7 @@ const Incidencias = sequelize.define(
       allowNull: true,
       references: {
         model: "T_Categorias",
-        key: "CT_cod_Categoria",
+        key: "CT_cod_categoria",
       },
     },
     CT_Afectacion: {
@@ -79,7 +79,7 @@ const Incidencias = sequelize.define(
       allowNull: true,
       references: {
         model: "T_Afectaciones",
-        key: "CT_cod_Afectacion",
+        key: "CT_cod_afectacion",
       },
     },
   },

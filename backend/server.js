@@ -6,7 +6,6 @@ const CORS = require("cors");
 app.use(CORS());
 app.use(express.json());
 
-
 const loginRoute = require('./src/Routes/LoginRoutes');
 const verifyToken = require('./src/Auth/authMiddleware');
 const RutasUsuarios = require('./src/Routes/UsuariosRoutes');

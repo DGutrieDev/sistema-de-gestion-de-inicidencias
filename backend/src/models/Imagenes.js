@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../sequelize_config");
+const sequelize = require("../../sequelize_config");
 
 const Imagenes = sequelize.define("T_Imagenes", {
     CN_cod_imagen: {

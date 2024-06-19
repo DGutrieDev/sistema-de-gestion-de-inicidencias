@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
-const Incidencias = require("../Incidencias");
+const Incidencias = require("./Incidencias");
 const Usuarios = require("./Usuarios");
 
 const Incidencias_asignadas = sequelize.define('T_Asignaciones', {
