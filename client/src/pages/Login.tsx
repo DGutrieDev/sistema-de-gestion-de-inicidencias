@@ -16,32 +16,32 @@ const Login: React.FunctionComponent<{}> = () => {
         e.preventDefault();
         try {
             const usuario = (document.querySelector('input[name="nombre_usuario"]') as HTMLInputElement).value
-            const password = (document.querySelector('input[name="contrasena_usuario"]') as HTMLInputElement).value
+            const contraseña = (document.querySelector('input[name="contrasena_usuario"]') as HTMLInputElement).value
 
-            if (!usuario || !password) {
+            if (!usuario || !contraseña) {
                 setToastStateColor('danger');
                 setToastMessage('Todos los campos son requeridos.');
                 setShowToast(true);
             }
 
-            const response = await axios.post('http://localhost:3000/api/login', {
+            const response = await axios.post('http://localhost:3000/api/Login', {
                 usuario,
-                password
+                contraseña
             });
             localStorage.clear();
             localStorage.setItem('token', response.data.data.token);
             localStorage.setItem('usuario', response.data.data.id_usuario);
             if (response.status === 200) {
                 setToastStateColor('success');
-                setToastMessage('Inicio de sesion exitoso.');
+                setToastMessage(`${response.data.message}`);
                 setShowToast(true);
                 setTimeout(() => {
                     history.push('/home');
                 }, 1000);
             }
-        } catch (error) {
+        } catch (error: any) {
             setToastStateColor('danger');
-            setToastMessage('Usuario o contraseña incorrectos.');
+            setToastMessage(`${error.response.data.message}`);
             setShowToast(true);
         };
     };
@@ -86,6 +86,7 @@ const Login: React.FunctionComponent<{}> = () => {
                     duration={1000}
                     position="top"
                     color={toastStateColor}
+                    className="custom_toast"
                 />
             </IonContent>
         </IonPage>

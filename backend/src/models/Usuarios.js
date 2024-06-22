@@ -34,6 +34,14 @@ const Usuarios = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    CT_numero_telefono: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CT_Token: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   { timestamps: false }
 );

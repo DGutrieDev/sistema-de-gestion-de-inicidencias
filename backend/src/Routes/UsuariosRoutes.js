@@ -1,23 +1,10 @@
-const UsuarioController = require('../Controllers/UsuariosController');
+const { UsuariosController } = require('../Controllers/global_controllers');
 const express = require('express');
 const router = express.Router();
 
-// Rutas GET
-router.get('/', UsuarioController.obtenerUsuarios);
-router.get('/:id_usuario', UsuarioController.obtenerUsuarioPorId);
-router.get('/rol/tecnicos', UsuarioController.obtenerTecnicos);
-
-// Rutas POST
-router.post('/rol', UsuarioController.asignarRoles);
-router.post('/crear', UsuarioController.crearUsuario);
-
-// Rutas PUT
-router.put('/:cedula', UsuarioController.actualizarUsuario);
-router.put('/contrasena/:cedula', UsuarioController.modificarContrasena);
-
-// Ruta DELETE
-router.delete('/rol/revocar', UsuarioController.revocarRol);
-
-
+router.post('/usuarios/crearIncidencias', UsuariosController.crearIncidencias);
+router.put('/usuarios/reabrirIncidencia/:cod_Incidencia', UsuariosController.reabrirIncidencia);
+router.get('/usuarios/informacionUsuario/:usuario', UsuariosController.informacionUsuario);
+router.get('/usuarios/obtenerIncidenciasUsuario/:usuario', UsuariosController.obtenerIncidenciasUsuario);
 
 module.exports = router;

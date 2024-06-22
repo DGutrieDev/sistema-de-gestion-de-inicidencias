@@ -1,367 +1,170 @@
-const Roles = require("../models/Roles");
-const Usuario = require("../models/Usuarios");
-const Usuario_Rol = require("../models/Usuario_Rol");
-const { emailRegistro } = require("../utils/Emails");
+const { Incidencias, Incidencia_Creada, Usuarios, UsuariosRoles, Estados, Roles } = require('../models/global_models');
+const { codIncidencias } = require('../Services/CodesGenerate_Service');
+const { IncidenciaRegistrada } = require('../Services/Email_Service');
+const moment = require('moment-timezone');
 
-async function crearUsuario(req, res) {
-  try {
-    const {
-      cedula,
-      nombre,
-      apellidoUno,
-      apellidoDos,
-      contraseña,
-      usuario_inst,
-      puesto,
-    } = req.body;
-
-    if (
-      !cedula ||
-      !nombre ||
-      !apellidoUno ||
-      !apellidoDos ||
-      !puesto ||
-      !usuario_inst
-    ) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
+async function crearIncidencias(req, res) {
+    try {
+        const { usuario, titulo, descripcion, lugar } = req.body;
+        const cod_Incidencia = codIncidencias((await Incidencias.count()) + 1);
+        const fecha = moment().tz("America/Costa_Rica").format("DD-MM-YYYY HH:mm:ss")
+        if (!usuario || !titulo || !descripcion || !lugar) {
+            return res.status(400).json({ message: "Faltan datos" });
+        }
+        const user = await Usuarios.findByPk(usuario);
+        const rol = await UsuariosRoles.findOne({
+            where: {
+                CT_id_usuario: usuario,
+                CT_cod_rol: 2
+            }
+        });
+        if (!rol) {
+            return res.status(401).json({ message: "No tiene permisos para crear incidencias" });
+        }
+        const incidencia = await Incidencias.create({
+            CT_cod_incidencia: cod_Incidencia,
+            CT_titulo: titulo,
+            CT_descripcion: descripcion,
+            CT_lugar: lugar,
+            CT_Estado: "1",
+            CF_Fecha_Hora: fecha
+        });
+        if (incidencia) {
+            creadorIncidencia(usuario, cod_Incidencia);
+            IncidenciaRegistrada(
+                user.CT_usuario_institucional,
+                `${user.CT_nombre} ${user.CT_apellidoUno} ${user.CT_apellidoDos}`,
+                cod_Incidencia,
+                titulo
+            );
+            return res.status(201).json({ message: "Incidencia creada" });
+        }
+        return res.status(400).json({ message: "No se pudo crear la incidencia" });
+    } catch (error) {
+        return res.status(500).json({ message: "Error en el servidor" });
     }
-    const usuarioData = {
-      CT_cedula: cedula,
-      CT_nombre: nombre,
-      CT_apellidoUno: apellidoUno,
-      CT_apellidoDos: apellidoDos,
-      CT_contraseña: contraseña || usuario_inst.toString().split("@")[0],
-      CT_usuario_institucional: usuario_inst || null,
-      CT_puesto: puesto,
-    };
-    const usuarioNuevo = await Usuario.create(usuarioData);
-    emailRegistro(
-      usuarioNuevo.CT_nombre +
-        " " +
-        usuarioNuevo.CT_apellidoUno +
-        " " +
-        usuarioNuevo.CT_apellidoDos,
-      usuarioNuevo.CT_usuario_institucional,
-      usuarioNuevo.CT_contraseña
-    );
-    res.status(201).json({ Mensaje: "Usuario Creado", usuarioNuevo });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ Mensaje: "Error al crear el usuario", error: err.message });
-  }
 }
 
-async function obtenerUsuarios(req, res) {
-  try {
-    const usuarios = await Usuario.findAll({
-      attributes: [
-        "CT_cedula",
-        "CT_nombre",
-        "CT_apellidoUno",
-        "CT_apellidoDos",
-        "CT_usuario_institucional",
-        "CT_puesto",
-      ],
-      include: [
-        {
-          model: Usuario_Rol,
-          attributes: ["CT_cod_Rol"],
-          include: [
-            {
-              model: Roles,
-              attributes: ["CT_desc_rol"],
+async function obtenerIncidenciasUsuario(req, res) {
+    try {
+        const { usuario } = req.params;
+        const incidenciascreadas = await Incidencia_Creada.findAll({
+            where: {
+                CT_id_usuario: usuario
+            }, include: [
+                { model: Incidencias, include: [{ model: Estados }] },
+                { model: Usuarios }
+            ]
+        });
+        if (!incidenciascreadas) {
+            return res.status(404).json({ message: "No se encontraron incidencias" });
+        }
+        const data = incidenciascreadas.map(incidencia => formatData(incidencia));
+        return res.status(200).json({ data });
+    } catch (error) {
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+async function informacionUsuario(req, res) {
+    try {
+        const { usuario } = req.params;
+        const user = await Usuarios.findByPk(
+            usuario, {
+            include: [
+                {
+                    model: UsuariosRoles,
+                    include: [{
+                        model: Roles,
+                        attributes: ['CT_desc_rol']
+                    }]
+                },
+            ]
+        });
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+        const data = formatUserData(user);
+        return res.status(200).json({ data });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+
+}
+
+async function reabrirIncidencia(req, res) {
+    try {
+        const { cod_Incidencia } = req.params;
+        const incidencia = await Incidencias.findOne({
+            where: {
+                CT_cod_incidencia: cod_Incidencia
             },
-          ],
-        },
-      ],
-    });
-    if (usuarios.length === 0) {
-      return res.status(404).json({ Mensaje: "No hay usuarios registrados" });
+            attributes: ['CT_Estado']
+        });
+        if (incidencia.CT_Estado !== "9") {
+            return res.status(400).json({ message: "La incidencia no se encuentra cerrada" });
+        }
+        await Incidencias.update({
+            CT_Estado: "1"
+        }, {
+            where: {
+                CT_cod_incidencia: cod_Incidencia
+            }
+        });
+        return res.status(200).json({ message: "Incidencia reabierta" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error en el servidor" });
     }
-    const usuarios_informacion = usuarios.map((usuario) => {
-      const roles = usuario.T_rol_usuarios
-        ? usuario.T_rol_usuarios.map((ur) => ({
-            CT_desc_rol: ur.T_Role.CT_desc_rol,
-          }))
-        : [];
-
-      return {
-        CT_cedula: usuario.CT_cedula,
-        CT_nombre: usuario.CT_nombre,
-        CT_apellidoUno: usuario.CT_apellidoUno,
-        CT_apellidoDos: usuario.CT_apellidoDos,
-        CT_usuario_institucional: usuario.CT_usuario_institucional,
-        CT_puesto: usuario.CT_puesto,
-        roles: roles,
-      };
-    });
-
-    res.status(200).json(usuarios_informacion);
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ Mensaje: "Error al obtener los usuarios", error: err.message });
-  }
 }
 
-async function obtenerUsuarioPorId(req, res) {
-  try {
-    const { id_usuario } = req.params;
-    const usuarios = await Usuario.findAll({
-      attributes: [
-        "CT_cedula",
-        "CT_nombre",
-        "CT_apellidoUno",
-        "CT_apellidoDos",
-        "CT_usuario_institucional",
-        "CT_puesto",
-      ],
-      where: { CT_cedula: id_usuario },
-      include: [
-        {
-          model: Usuario_Rol,
-          attributes: ["CT_cod_Rol"],
-          include: [
-            {
-              model: Roles,
-              attributes: ["CT_id_Rol", "CT_desc_rol"],
-              order: [["CT_desc_rol", "DESC"]],
-            },
-          ],
-        },
-      ],
-    });
-    if (usuarios.length === 0) {
-      return res.status(404).json({ Mensaje: "Usuario no encontrado" });
+async function creadorIncidencia(usuario, cod_Incidencia) {
+    try {
+        const incidencia = await Incidencias.findOne({
+            where: {
+                CT_cod_incidencia: cod_Incidencia
+            }
+        });
+        await Incidencia_Creada.create({
+            CT_id_usuario: usuario,
+            CT_cod_incidencia: incidencia.CT_cod_incidencia
+        });
+    } catch (error) {
+        console.log(error);
     }
-    const usuarios_informacion = usuarios.map((usuario) => {
-      const roles = usuario.T_rol_usuarios
-        ? usuario.T_rol_usuarios.map((ur) => ({
-            CT_id_Rol: ur.T_Role.CT_id_Rol,
-            CT_desc_rol: ur.T_Role.CT_desc_rol,
-          }))
-        : [];
-
-      return {
-        CT_cedula: usuario.CT_cedula,
-        CT_nombre: usuario.CT_nombre,
-        CT_apellidoUno: usuario.CT_apellidoUno,
-        CT_apellidoDos: usuario.CT_apellidoDos,
-        CT_usuario_institucional: usuario.CT_usuario_institucional,
-        CT_puesto: usuario.CT_puesto,
-        roles: roles,
-      };
-    });
-
-    res.status(200).json(usuarios_informacion);
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ Mensaje: "Error al obtener los usuarios", error: err.message });
-  }
 }
 
-async function obtenerTecnicos(req, res) {
-  try {
-    const usuarios = await Usuario.findAll({
-      attributes: [
-        "CT_cedula",
-        "CT_nombre",
-        "CT_apellidoUno",
-        "CT_apellidoDos",
-      ],
-      include: [
-        {
-          model: Usuario_Rol,
-          attributes: ["CT_cod_Rol"],
-          where: { CT_cod_Rol: 4 },
-        },
-      ],
-    });
-    if (usuarios.length === 0) {
-      return res.status(404).json({ Mensaje: "No hay técnicos registrados" });
+function formatData(Incidencia) {
+    return {
+        Creador: Incidencia.T_Usuario.CT_nombre + " " + Incidencia.T_Usuario.CT_apellidoUno + " " + Incidencia.T_Usuario.CT_apellidoDos,
+        CT_cod_incidencia: Incidencia.T_Incidencia.CT_cod_incidencia,
+        CT_titulo: Incidencia.T_Incidencia.CT_titulo,
+        CT_descripcion: Incidencia.T_Incidencia.CT_descripcion,
+        CT_lugar: Incidencia.T_Incidencia.CT_lugar,
+        CT_Estado: Incidencia.T_Incidencia.T_Estado.CT_descrip_estado,
+        CF_Fecha_Hora: Incidencia.T_Incidencia.CF_Fecha_Hora
     }
-    const usuarios_informacion = usuarios.map((usuario) => {
-      return {
-        CT_cedula: usuario.CT_cedula,
-        CT_nombre: usuario.CT_nombre,
-        CT_apellidoUno: usuario.CT_apellidoUno,
-        CT_apellidoDos: usuario.CT_apellidoDos,
-        CT_usuario_institucional: usuario.CT_usuario_institucional,
-        CT_puesto: usuario.CT_puesto,
-      };
-    });
-
-    res.status(200).json(usuarios_informacion);
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ Mensaje: "Error al obtener los técnicos", error: err.message });
-  }
 }
 
-async function actualizarUsuario(req, res) {
-  try {
-    const { cedula } = req.params;
-    const {
-      nombre,
-      apellidoUno,
-      apellidoDos,
-      contraseña,
-      usuario_inst,
-      puesto,
-    } = req.body;
-
-    if (!nombre || !apellidoUno || !apellidoDos || !contraseña || !puesto) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
+function formatUserData(user) {
+    return {
+        cedula: user.CT_cedula,
+        nombre: user.CT_nombre,
+        apellidoUno: user.CT_apellidoUno,
+        apellidoDos: user.CT_apellidoDos,
+        correo: user.CT_usuario_institucional,
+        telefono: user.CT_telefono,
+        puesto: user.CT_puesto,
+        numeroTelefono: user.CT_numero_telefono ? user.CT_numero_telefono : 'No disponible',
+        roles: user.T_rol_usuarios.map((rol) => rol.T_Role.CT_desc_rol),
     }
 
-    const usuarioData = {
-      CT_nombre: nombre,
-      CT_apellidoUno: apellidoUno,
-      CT_apellidoDos: apellidoDos,
-      CT_contraseña: contraseña,
-      CT_usuario_institucional: usuario_inst || null,
-      CT_puesto: puesto,
-    };
-
-    const usuario = await Usuario.findByPk(cedula);
-
-    if (usuario) {
-      await Usuario.update(usuarioData, { where: { CT_cedula: cedula } });
-      res.status(200).json({ Mensaje: "Usuario Actualizado" });
-    } else {
-      res.status(404).json({ Mensaje: "Usuario no encontrado" });
-    }
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ Mensaje: "Error al actualizar el usuario", error: err.message });
-  }
-}
-
-async function asignarRoles(req, res) {
-  try {
-    const { cedula, rol } = req.body;
-
-    if (!rol) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
-    }
-
-    const role = await Roles.findByPk(rol, { attributes: ["CT_desc_rol"] });
-    const usuario = await Usuario.findByPk(cedula);
-
-    if (usuario) {
-      await Usuario_Rol.create({ CT_id_usuario: cedula, CT_cod_Rol: rol });
-      res.status(200).json({
-        Mensaje: `Al Usuario ${cedula} se le ha asignado el rol de ${role.CT_desc_rol}`,
-      });
-    } else {
-      res.status(404).json({ Mensaje: "Usuario no encontrado" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      Mensaje: "Error al asignar roles al usuario",
-      error: err.message,
-    });
-  }
-}
-
-async function revocarRol(req, res) {
-  try {
-    const { cedula, rol } = req.body;
-
-    if (!rol) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
-    }
-
-    const usuario = await Usuario.findByPk(cedula);
-
-    if (!usuario) {
-      return res.status(404).json({ Mensaje: "Usuario no encontrado" });
-    }
-
-    const role = await Roles.findByPk(rol, { attributes: ["CT_desc_rol"] });
-
-    if (!role) {
-      return res.status(404).json({ Mensaje: "Rol desconocido" });
-    }
-
-    const usuarioRol = await Usuario_Rol.findOne({
-      where: {
-        CT_id_usuario: cedula,
-        CT_cod_Rol: rol,
-      },
-    });
-
-    if (!usuarioRol) {
-      return res.status(400).json({
-        Mensaje: `El usuario(a) ${usuario.CT_nombre} ${usuario.CT_apellidoUno} ${usuario.CT_apellidoDos} no posee el rol de ${role.CT_desc_rol}`,
-      });
-    }
-
-    await Usuario_Rol.destroy({
-      where: {
-        CT_id_usuario: cedula,
-        CT_cod_Rol: rol,
-      },
-    });
-
-    res.status(200).json({
-      Mensaje: `Al Usuario ${cedula} se le ha revocado el rol de ${role.CT_desc_rol}`,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      Mensaje: "Error al revocar roles al usuario",
-      error: err.message,
-    });
-  }
-}
-
-async function modificarContrasena(req, res) {
-  try {
-    const { cedula } = req.params;
-    const { contraseña } = req.body;
-
-    if (!contraseña) {
-      return res.status(400).json({ Mensaje: "Faltan campos requeridos" });
-    }
-
-    const usuario = await Usuario.findByPk(cedula);
-
-    if (usuario) {
-      await Usuario.update(
-        { CT_contraseña: contraseña },
-        { where: { CT_cedula: cedula } }
-      );
-      res.status(200).json({ Mensaje: "Contraseña Actualizada" });
-    } else {
-      res.status(404).json({ Mensaje: "Usuario no encontrado" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      Mensaje: "Error al actualizar la contraseña del usuario",
-      error: err.message,
-    });
-  }
 }
 
 module.exports = {
-  crearUsuario,
-  actualizarUsuario,
-  asignarRoles,
-  revocarRol,
-  obtenerUsuarioPorId,
-  obtenerUsuarios,
-  modificarContrasena,
-  obtenerTecnicos,
-};
+    crearIncidencias,
+    obtenerIncidenciasUsuario,
+    informacionUsuario,
+    reabrirIncidencia
+}

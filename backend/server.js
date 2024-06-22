@@ -1,33 +1,36 @@
-require('dotenv').config();
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
+const sequelize = require("./sequelize_config");
 const app = express();
-const PORT = process.env.PORT
+const PORT = process.env.PORT;
 const CORS = require("cors");
+const limit = require("express-rate-limit");
+
+const limiter = limit({
+  windowMs: 15 * 60 * 1000,
+  max: 45,
+  message: "Too many requests, please try again later.",
+  standardHeaders: false,
+	legacyHeaders: false,
+});
+
+app.use(limiter);
 app.use(CORS());
 app.use(express.json());
 
-const loginRoute = require('./src/Routes/LoginRoutes');
-const verifyToken = require('./src/Auth/authMiddleware');
-const RutasUsuarios = require('./src/Routes/UsuariosRoutes');
-const RutasIncidencias = require('./src/Routes/IncidenciasRoutes');
-const RutasDiagnostico = require('./src/Routes/DiagnosticoRoutes');
-const RutasEstados = require('./src/Routes/EstadosRoutes');
-const RutasAfectacion = require('./src/Routes/AfectacionRoutes');
-const RutasRiesgos = require('./src/Routes/RiesgosRoutes');
-const RutasCategoria = require('./src/Routes/CategoriaRoutes');
-const RutasPrioridad = require('./src/Routes/PrioridadRoutes');
+const { SessionRoutes, UsuariosRoutes,EncargadoRoutes } = require("./src/Routes/global_routes");
 
-app.use('/api', loginRoute);
-app.use('/api/estados', RutasEstados);
-app.use('/api/riesgos', RutasRiesgos);
-app.use('/api/usuarios', RutasUsuarios);
-app.use('/api/prioridad', RutasPrioridad);
-app.use('/api/categorias', RutasCategoria);
-app.use('/api/afectacion', RutasAfectacion);
-app.use('/api/incidencias', RutasIncidencias);
-app.use('/api/diagnostico', RutasDiagnostico);
+app.use("/api", SessionRoutes);
+app.use("/api", UsuariosRoutes);
+app.use("/api", EncargadoRoutes);
 
-
-app.listen(PORT, () => {
-    console.log('Server listen PORT ', PORT);
-});
+sequelize
+  .sync()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });

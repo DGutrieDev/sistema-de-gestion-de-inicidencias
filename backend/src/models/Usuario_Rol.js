@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
-const Usuarios = require("../models/Usuarios"); // Importar el modelo Usuarios
-const Roles = require("../models/Roles"); // Importar el modelo Roles
+const Usuarios = require("./Usuarios"); // Importar el modelo Usuarios
+const Roles = require("./Roles"); // Importar el modelo Roles
 
 const UsuarioRol = sequelize.define(
     "T_rol_usuarios",

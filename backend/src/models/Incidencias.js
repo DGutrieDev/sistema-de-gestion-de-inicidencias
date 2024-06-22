@@ -27,7 +27,7 @@ const Incidencias = sequelize.define(
       allowNull: false,
     },
     CF_Fecha_Hora: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     CN_Costo: {
