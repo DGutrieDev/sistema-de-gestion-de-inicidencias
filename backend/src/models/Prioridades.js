@@ -19,6 +19,8 @@ const Prioridades = sequelize.define("T_Prioridades", {
         type: DataTypes.STRING,
         defaultValue: '1'
     }
-}, { timestamps: false });
+}, { timestamps: false,
+    tableName: "T_Prioridades"
+ });
 
 module.exports = Prioridades;

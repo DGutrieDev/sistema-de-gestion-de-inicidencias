@@ -26,7 +26,9 @@ const Incidencias_asignadas = sequelize.define('T_Asignaciones', {
             key: 'CT_cedula'
         }
     }
-},{timestamps: false}
+},{timestamps: false,
+    tableName: "T_Asignaciones"
+}
 );
 
 Usuarios.hasMany(Incidencias_asignadas, {

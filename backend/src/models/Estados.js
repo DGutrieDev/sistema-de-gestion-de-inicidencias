@@ -19,6 +19,8 @@ const Estados = sequelize.define("T_Estados", {
         type: DataTypes.STRING,
         defaultValue: '1'
     }
-}, { timestamps: false });
+}, { timestamps: false,
+    tableName: "T_Estados"
+ });
 
 module.exports = Estados;

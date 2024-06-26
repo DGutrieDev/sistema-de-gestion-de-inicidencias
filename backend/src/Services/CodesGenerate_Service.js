@@ -15,7 +15,6 @@ function codImagen(num_incidencia, n) {
     const cons = n.toString().padStart(2, '0');
     const cod = `IMG-${cons}-${num_incidencia}`;
     return cod;
-
 }
 
 module.exports = {

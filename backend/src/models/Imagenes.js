@@ -2,16 +2,17 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
 const Imagenes = sequelize.define("T_Imagenes", {
-    CN_cod_imagen: {
+    CT_cod_imagen: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
-        autoIncrement: true
     },
     CI_imagen: {
-        type: DataTypes.BLOB,
+        type: DataTypes.TEXT,
         allowNull: false
     }
-}, { timestamps: false });
+}, { timestamps: false,
+    tableName: "T_Imagenes"
+ });
 
 module.exports = Imagenes;

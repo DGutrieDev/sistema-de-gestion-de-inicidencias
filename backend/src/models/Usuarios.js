@@ -27,7 +27,7 @@ const Usuarios = sequelize.define(
     },
     CT_usuario_institucional: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       unique: true,
     },
     CT_puesto: {
@@ -43,7 +43,9 @@ const Usuarios = sequelize.define(
       allowNull: true,
     },
   },
-  { timestamps: false }
+  { timestamps: false ,
+    tableName: "T_Usuarios"
+  }
 );
 
 module.exports = Usuarios;

@@ -18,11 +18,12 @@ app.use(limiter);
 app.use(CORS());
 app.use(express.json());
 
-const { SessionRoutes, UsuariosRoutes,EncargadoRoutes } = require("./src/Routes/global_routes");
+const { SessionRoutes, UsuariosRoutes,EncargadoRoutes,TecnicoRoutes } = require("./src/Routes/global_routes");
 
 app.use("/api", SessionRoutes);
 app.use("/api", UsuariosRoutes);
 app.use("/api", EncargadoRoutes);
+app.use("/api", TecnicoRoutes);
 
 sequelize
   .sync()

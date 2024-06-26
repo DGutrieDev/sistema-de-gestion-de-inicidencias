@@ -28,7 +28,9 @@ const Usuario_Incidencia_Creacion = sequelize.define(
             }
         }
     }, 
-    { timestamps: false }
+    { timestamps: false,
+        tableName: "T_Usuario_Creacion_Incidencias"
+     }
 );
 
 Usuarios.hasMany(Usuario_Incidencia_Creacion, {

@@ -23,6 +23,8 @@ const Diagnostico = sequelize.define("T_Diagnosticos", {
         type: DataTypes.STRING,
         allowNull: true
     }
-}, { timestamps: false });
+}, { timestamps: false,
+    tableName: "T_Diagnosticos"
+ });
 
 module.exports = Diagnostico;

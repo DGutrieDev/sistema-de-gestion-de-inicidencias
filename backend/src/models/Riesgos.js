@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 
-const Riesgos = sequelize.define("T_Riesgo", {
+const Riesgos = sequelize.define("T_Riesgos", {
     CT_cod_riesgo: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -19,6 +19,6 @@ const Riesgos = sequelize.define("T_Riesgo", {
         type: DataTypes.STRING,
         defaultValue: '1'
     }
-}, { timestamps: false });
+}, { timestamps: false, tableName: "T_Riesgos" });
 
 module.exports = Riesgos;

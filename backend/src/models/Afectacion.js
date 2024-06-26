@@ -19,6 +19,8 @@ const Afectacion = sequelize.define("T_Afectaciones", {
         type: DataTypes.STRING,
         defaultValue: '1'
     }
-}, { timestamps: false });
+}, { timestamps: false,
+    tableName: "T_Afectaciones"
+ });
 
 module.exports = Afectacion;

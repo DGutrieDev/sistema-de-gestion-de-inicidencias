@@ -7,4 +7,4 @@ router.put('/usuarios/reabrirIncidencia/:cod_Incidencia', UsuariosController.rea
 router.get('/usuarios/informacionUsuario/:usuario', UsuariosController.informacionUsuario);
 router.get('/usuarios/obtenerIncidenciasUsuario/:usuario', UsuariosController.obtenerIncidenciasUsuario);
 
-module.exports = router;
+module.exports = router;``

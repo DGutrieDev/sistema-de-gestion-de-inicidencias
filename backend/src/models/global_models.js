@@ -14,6 +14,9 @@ const Riesgos = require("./Riesgos");
 const Roles = require("./Roles");
 const Usuarios = require("./Usuarios");
 const UsuariosRoles = require("./Usuario_Rol");
+const Bitacora_acciones = require("./Bitacora_acciones");
+const Bitacora_estados = require("./Bitacora_estados");
+const Incidencia_imagen = require("./Incidencia_imagen");
 
 module.exports = {
   Afectaciones,
@@ -32,4 +35,7 @@ module.exports = {
   Roles,
   Usuarios,
   UsuariosRoles,
+  Bitacora_acciones,
+  Bitacora_estados,
+  Incidencia_imagen,
 };

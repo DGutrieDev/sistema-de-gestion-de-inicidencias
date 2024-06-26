@@ -19,7 +19,7 @@ const Roles = sequelize.define(
         type: DataTypes.STRING,
     }
   },
-  { timestamps: false }
+  { timestamps: false, tableName: "T_Roles"}
 );
 
 module.exports = Roles;

@@ -26,7 +26,9 @@ const Diagnostico_Incidencias = sequelize.define('T_Diagnostico_Incidencias', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-}, {timestamps: false});
+}, {timestamps: false , 
+    tableName: "T_Diagnostico_Incidencias"
+});
 
 Usuario.hasMany(Diagnostico_Incidencias, {
     foreignKey: 'CT_id_usuario',

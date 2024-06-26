@@ -14,7 +14,9 @@ const Departamentos = sequelize.define(
       allowNull: false,
     },
   },
-  { timestamps: false }
+  { timestamps: false,
+    tableName: "T_Departamentos"
+   }
 );
 
 module.exports = Departamentos;

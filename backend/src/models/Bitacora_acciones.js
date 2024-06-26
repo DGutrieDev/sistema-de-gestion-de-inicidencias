@@ -1,10 +1,11 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
 const Usuarios = require("./Usuarios");
-const Roles = require("./Roles");
+const Pantallas = require("./Pantallas");
 
-const UsuarioRol = sequelize.define(
-    "T_rol_usuarios",
+
+const Bitacora_acciones = sequelize.define(
+    "T_bitacora_acciones",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -19,34 +20,39 @@ const UsuarioRol = sequelize.define(
                 key: "CT_cedula",
             },
         },
-        CT_cod_Rol: {
+        CT_id_Pantalla: {
             type: DataTypes.STRING,
             allowNull: false,
             references: {
-                model: Roles,
-                key: "CT_id_Rol",
+                model: Pantallas,
+                key: "CT_cod_Pantalla",
             },
+        },
+        CT_logs: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
-    },
-    { timestamps: false, tableName: "T_rol_usuarios" }
+    },{ timestamps: false, tableName: "T_bitacora_acciones" }
 );
 
-Usuarios.hasMany(UsuarioRol, {
+Usuarios.hasMany(Bitacora_acciones, {
     foreignKey: "CT_id_usuario",
     sourceKey: "CT_cedula",
 });
-UsuarioRol.belongsTo(Usuarios, {
+
+Bitacora_acciones.belongsTo(Usuarios, {
     foreignKey: "CT_id_usuario",
     targetKey: "CT_cedula",
 });
 
-Roles.hasMany(UsuarioRol, {
-    foreignKey: "CT_cod_Rol",
-    sourceKey: "CT_id_Rol",
-});
-UsuarioRol.belongsTo(Roles, {
-    foreignKey: "CT_cod_Rol",
-    targetKey: "CT_id_Rol",
+Pantallas.hasMany(Bitacora_acciones, {
+    foreignKey: "CT_cod_pantalla",
+    sourceKey: "CT_cod_Pantalla",
 });
 
-module.exports = UsuarioRol;
+Bitacora_acciones.belongsTo(Pantallas, {
+    foreignKey: "CT_cod_pantalla",
+    targetKey: "CT_cod_Pantalla",
+});
+
+module.exports = Bitacora_acciones;

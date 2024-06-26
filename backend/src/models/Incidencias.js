@@ -83,7 +83,9 @@ const Incidencias = sequelize.define(
       },
     },
   },
-  { timestamps: false }
+  { timestamps: false,
+    tableName: "T_Incidencias"
+   }
 );
 
 Incidencias.belongsTo(Estados, {

@@ -7,10 +7,7 @@ async function LogIn(req, res) {
     const { usuario, contraseña } = req.body;
     const user = await Usuarios.findOne({
       where: {
-        [Op.or]: [
-          { CT_cedula: usuario },
-          { CT_usuario_institucional: usuario },
-        ],
+        CT_usuario_institucional: usuario,
         CT_contraseña: contraseña,
       },
     });

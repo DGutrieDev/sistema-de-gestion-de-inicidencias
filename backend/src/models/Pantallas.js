@@ -6,6 +6,7 @@ const Pantallas = sequelize.define(
   {
     CT_cod_Pantalla: {
       type: DataTypes.STRING,
+      primaryKey: true,
       allowNull: false,
     },
     CT_Desc_Pantalla: {
@@ -13,7 +14,9 @@ const Pantallas = sequelize.define(
       allowNull: false,
     },
   },
-  { timestamps: false }
+  { timestamps: false,
+    tableName: "T_Pantallas"
+   }
 );
 
 module.exports = Pantallas;
