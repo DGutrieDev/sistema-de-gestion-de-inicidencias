@@ -1,6 +1,7 @@
 import { IonApp, IonRouterOutlet, IonSplitPane, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route } from 'react-router-dom';
+import { AuthProvider } from './Auth/authContext';
 import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/Login';
@@ -40,6 +41,7 @@ setupIonicReact();
 
 const App: React.FC = () => {
   return (
+    <AuthProvider>
     <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId="main">
@@ -59,6 +61,7 @@ const App: React.FC = () => {
         </IonSplitPane>
       </IonReactRouter>
     </IonApp>
+    </AuthProvider>
   );
 };
 

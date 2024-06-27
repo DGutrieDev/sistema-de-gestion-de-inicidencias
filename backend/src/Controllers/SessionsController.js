@@ -7,7 +7,10 @@ async function LogIn(req, res) {
     const { usuario, contraseña } = req.body;
     const user = await Usuarios.findOne({
       where: {
-        CT_usuario_institucional: usuario,
+        [Op.or]: [
+          { CT_cedula: usuario },
+          { CT_usuario_institucional: usuario },
+        ],
         CT_contraseña: contraseña,
       },
     });
@@ -37,8 +40,8 @@ async function LogIn(req, res) {
       },
       process.env.TOKEN_SECRET
     );
-    await Usuarios.update(
-      {
+    /*await Usuarios.update(
+     {
         CT_Token: token,
       },
       {
@@ -49,7 +52,7 @@ async function LogIn(req, res) {
           ],
         },
       }
-    );
+    );*/
     res.status(200).json({
       message: "Sesión iniciada exitosamente",
       data: { id_usuario: user.CT_cedula, token: token },

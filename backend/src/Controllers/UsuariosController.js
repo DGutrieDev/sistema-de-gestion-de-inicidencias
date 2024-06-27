@@ -89,7 +89,7 @@ async function informacionUsuario(req, res) {
                     model: UsuariosRoles,
                     include: [{
                         model: Roles,
-                        attributes: ['CT_desc_rol']
+                        attributes: ['CT_id_Rol','CT_desc_rol']
                     }]
                 },
             ]
@@ -174,7 +174,7 @@ function formatUserData(user) {
         telefono: user.CT_telefono,
         puesto: user.CT_puesto,
         numeroTelefono: user.CT_numero_telefono ? user.CT_numero_telefono : 'No disponible',
-        roles: user.T_rol_usuarios.map((rol) => rol.T_Role.CT_desc_rol),
+        roles: user.T_rol_usuarios.map((rol) => rol.T_Role),
     }
 
 }

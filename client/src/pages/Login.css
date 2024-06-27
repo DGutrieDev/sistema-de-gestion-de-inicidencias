@@ -1,36 +1,13 @@
-.circle1 {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 15%;
-  width: 30%;
-  border-bottom-left-radius: 100%;
-  background: rgb(0, 170, 204);
-  background: rgb(0,204,244);
-  background: linear-gradient(43deg, rgba(0,204,244,1) 0%, rgba(184,242,255,1) 32%, rgba(0,212,255,1) 100%);
-}
 
-.circle2 {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  height: 15%;
-  width: 30%;
-  border-top-right-radius: 100%;
-  background: rgb(0,204,244);
-  background: linear-gradient(43deg, rgba(0,204,244,1) 0%, rgba(184,242,255,1) 8%, rgba(0,212,255,1) 100%);
-}
 
-.dot {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-  display: inline-block;
-  position: absolute;
-  top: 2%;
-  left: 10%;
-  background: rgb(0,204,244);
-  background: linear-gradient(43deg, rgba(0,204,244,1) 0%, rgba(184,242,255,1) 16%, rgba(0,212,255,1) 100%);
+.background{
+    width: 100%;
+    height: 100vh;
+    background: url('../assets/Sprinkle.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
 }
 
 .Form_container{
@@ -40,40 +17,40 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: fixed;
 }
 
 .login_fields{
     height: 50px;
-    width: 85%;
-    margin-left: 5px;
+    width: 95%;
+    margin-left: 10px;
     border-bottom: 1px solid #ccc;
 }
 
 .login_fields:first-child{
-    margin-bottom: 10px;
+    margin-bottom: 25px;
 }
 
-.icons{
+.icon{
     font-size: 24px;
 }
 
 .button{
-    margin-left: 5px;
+    margin-left: 15px;
     height: 50px;
-    width: 85%;
-    margin-top: 25px;
+    width: 90%;
+    margin-top: 35px;
+    color: #ffff;
 }
 
 .nom_sistema{
-    width: 90%;
+    width: 100%;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 60px;
 }
 
 .nom_sistema h1{
-    margin-left: 7px;
-    font-size: 16px;
+    margin-left: 2px;
+    font-size: 20px;
     font-weight: 500;
     letter-spacing: 1px;
 }
