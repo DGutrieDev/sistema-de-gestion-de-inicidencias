@@ -5,6 +5,9 @@ const { Op } = require("sequelize");
 async function LogIn(req, res) {
   try {
     const { usuario, contraseña } = req.body;
+    if (!usuario || !contraseña) {
+      return res.status(400).json({ message: "Faltan datos" });
+    }
     const user = await Usuarios.findOne({
       where: {
         [Op.or]: [

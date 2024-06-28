@@ -1,29 +1,34 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent } from '@ionic/react';
-import './Home.css';
-import Logo from '../assets/Logo UCR.png';
+import { useAuth } from '../Auth/authContext';
+import '../styles/Home.css';
+import Logo from '../assets/UCR.png';
+
+interface User {
+    nombre: string;
+    correo: string;
+    apellidoUno: string;
+    apellidoDos: string;
+    roles: String[];
+}
 
 
 const Home: React.FC = () => {
+    const { isAuthenticated, usuario } = useAuth();
     const [user, setUser] = useState<User | string | null>(null);
+    const actualDate = (new Date().getDay() + 1) + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear();
     const Host = import.meta.env.VITE_BASE_URL;
     async function getUser() {
-        const response = await axios.get(`${Host}/usuarios/informacionUsuario/702730905`);
+        const response = await axios.get(`${Host}/usuarios/informacionUsuario/${usuario}`);
         setUser(response.data.data);
     }
 
     useEffect(() => {
-        getUser();
-    }, []);
-
-    interface User {
-        nombre: string;
-        correo: string;
-        apellidoUno: string;
-        apellidoDos: string;
-        roles: String[];
-    }
+        if (isAuthenticated && usuario) {
+            getUser();
+        }
+    }, [isAuthenticated, usuario]);
 
     return (
         <IonPage>
@@ -36,15 +41,25 @@ const Home: React.FC = () => {
             </IonHeader>
             <IonContent fullscreen>
                 <div className="home_content">
-                    <img src={Logo}></img>
+                    <img src={Logo} className='Logo'></img>
                     <div className="home_info">
                         <h1>Bienvenido !</h1>
+                        <br />
                         {user && typeof user !== 'string' ? (
                             <div>
-                                <p>{user.nombre} {user.apellidoUno} {user.apellidoDos}</p>
+                                <h2>{user.nombre} {user.apellidoUno} {user.apellidoDos}</h2>
+                                <p>Sistema de Gestion de Incidencias</p>
+                                <p>{actualDate}</p>
                             </div>
                         ) : (
-                            <p>Cargando ...</p>
+                            <>
+                                <p>
+                                    Cargando información del usuario...
+                                </p>
+                                <p>
+                                    {actualDate}
+                                </p>
+                            </>
                         )}
                     </div>
                 </div>

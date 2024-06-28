@@ -1,4 +1,4 @@
-const { Roles, Incidencias, Incidencia_Asignada, Afectaciones, Estados, Categorias, Riesgos, UsuariosRoles, Usuarios } = require('../models/global_models');
+const { Roles, Incidencias, Incidencia_Asignada, Afectaciones, Estados, Categorias, Riesgos, UsuariosRoles, Usuarios, Prioridades } = require('../models/global_models');
 const { EmailAsignacion } = require('../Services/Email_Service');
 const sequelize = require('sequelize');
 
@@ -9,6 +9,7 @@ async function obtenerIncidenciasRegistradas(req, res) {
                 CT_Estado: "1"
             }
         });
+        return res.status(200).json({ incidencias });
     } catch (error) {
         return res.status(500).json({ message: "Error en el servidor" });
     }
@@ -88,8 +89,74 @@ async function asignarIncidencia(req, res) {
     }
 }
 
+async function obtenerRiesgos(req, res) {
+    try {
+        const riesgos = await Riesgos.findAll(
+            { attributes: ['CT_cod_riesgo', 'CT_descrip_riesgo'] }
+        );
+        return res.status(200).json({ riesgos });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+async function obtenerCategorias(req, res) {
+    try {
+        const categorias = await Categorias.findAll(
+            { attributes: ['CT_cod_categoria', 'CT_descrip_categ']}
+        );
+        return res.status(200).json({ categorias });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+async function obtenerEstados(req, res) {
+    try {
+        const estados = await Estados.findAll(
+            { attributes: ['CT_cod_estado', 'CT_descrip_estado']}
+        );
+        return res.status(200).json({ estados });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+async function obtenerAfectaciones(req, res) {
+    try {
+        const afectaciones = await Afectaciones.findAll(
+            { attributes: ['CT_cod_afectacion', 'CT_descrip_afec']}
+        );
+        return res.status(200).json({ afectaciones });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+async function obtenerPrioridades(req, res) {
+    try {
+        const prioridades = await Prioridades.findAll(
+            { attributes: ['CT_cod_prioridad', 'CT_descrip_prioridad']}
+        );
+        return res.status(200).json({ prioridades });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+}
+
+
 module.exports = {
     obtenerIncidenciasRegistradas,
     obtenerTecnicos,
-    asignarIncidencia
+    asignarIncidencia,
+    obtenerRiesgos,
+    obtenerCategorias,
+    obtenerEstados,
+    obtenerAfectaciones,
+    obtenerPrioridades
 }

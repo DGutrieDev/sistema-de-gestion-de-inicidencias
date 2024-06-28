@@ -5,23 +5,25 @@ import { useAuth } from "../Auth/authContext";
 import { useHistory } from "react-router";
 import axios from 'axios';
 import logo from '../assets/Logo UCR.png';
-import './Login.css';
+import '../styles/Login.css';
 
 const Login: React.FunctionComponent<{}> = () => {
     const [usuario, setUsuario] = useState<string>();
     const [contraseña, setContraseña] = useState<string>();
     const { Login } = useAuth();
+    const history = useHistory();
     const Host = import.meta.env.VITE_BASE_URL;
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(Host)
         try{
-            const res = await axios.post(`${Host}/login`, {
+            const res = await axios.post(`${Host}/Login`, {
                 usuario: usuario,
                 contraseña: contraseña
             });
            if(res.status === 200){
                 Login(res.data.data.token, res.data.data.id_usuario);
+                history.push('/Home');
            }
         }catch(e){
             console.log(e);
@@ -42,7 +44,7 @@ const Login: React.FunctionComponent<{}> = () => {
                                     <IonInput
                                         name="nombre_usuario"
                                         className="login_fields" placeholder="Correo o Identificacion"
-                                        onIonChange={(e) => setUsuario(e.detail.value ?? "undefined")}>
+                                        onIonChange={(e) => setUsuario(e.detail.value!)}>
                                         <div slot="label">
                                             <IonIcon icon={personOutline} className="icon"></IonIcon>
                                         </div>
@@ -51,7 +53,7 @@ const Login: React.FunctionComponent<{}> = () => {
                                         name="contrasena_usuario"
                                         type="password"
                                         className="login_fields" placeholder="Contraseña"
-                                        onIonChange={(e) => setContraseña(e.detail.value ?? "undefined")}>
+                                        onIonChange={(e) => setContraseña(e.detail.value!)}>
                                         <div slot="label">
                                             <IonIcon icon={lockClosedOutline} className="icon"></IonIcon>
                                         </div>

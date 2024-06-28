@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonNote } from '@ionic/react';
+import { useAuth } from '../Auth/authContext';
+import ImageUploader from "../components/ImageUploader";
 import axios from 'axios';
 import '../styles/formularios.css';
 
@@ -10,8 +12,7 @@ const FormIncidencias: React.FC = () => {
     const [toastMessage, setToastMessage] = useState<string>('');
     const [showToast, setShowToast] = useState<boolean>(false);
     const [toastStateColor, setToastStateColor] = useState<string>('');
-    const [base64, setBase64] = useState<string[]>([]);
-    const [base64Error, setBase64Error] = useState<string | null>(null);
+    const [base64, setBase64] = useState<string | null>(null)
     const [titulo, setTitulo] = useState<string>('');
     const [descrip, setDescrip] = useState<string>('');
     const [lugar, setLugar] = useState<string>('');
@@ -20,61 +21,17 @@ const FormIncidencias: React.FC = () => {
     const history = useHistory();
     const Host = import.meta.env.VITE_BASE_URL;
 
-    const handleImageUpload = (event: any) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setBase64(reader.result as unknown as string[]);
-            };
-            reader.onerror = () => {
-                setBase64Error("Error reading file");
-            };
-            reader.readAsDataURL(file);
-            console.log(base64);
-        } else {
-            setBase64Error("No file selected");
-            console.log(base64Error);
-        }
-    };
+    // Auth hook
+    const { isAuthenticated,usuario } = useAuth();
+
+    if (!isAuthenticated){
+        history.push('/Login');
+        return null;
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        try {
-            if (!titulo || !descrip || !lugar) {
-                setToastStateColor('danger');
-                setToastMessage('Todos los campos son requeridos.');
-                setShowToast(true);
-                return;
-            }
-
-            const response = await axios.post(`${Host}/usuarios/crearIncidencias`, {
-                usuario: "702730905",
-                titulo: titulo,
-                descripcion: descrip,
-                lugar: lugar,
-                imagen: base64 || null
-            });
-
-            if (response.status === 201) {
-                setToastStateColor('success');
-                setToastMessage('Incidencia registrada exitosamente.');
-                setShowToast(true);
-                setTimeout(() => {
-                    setShowToast(false);
-                    history.push('/Home');
-                }, 1000);
-            } else {
-                setToastStateColor('danger');
-                setToastMessage('Error al registrar la incidencia.');
-                setShowToast(true);
-            }
-        } catch (error) {
-            setToastStateColor('danger');
-            setToastMessage('Error al registrar la incidencia.');
-            setShowToast(true);
-            console.log(error);
-        }
+        console.log(base64);
     };
 
     return (
@@ -111,14 +68,7 @@ const FormIncidencias: React.FC = () => {
                                 placeholder='Lugar de Incidencia'
                                 onIonChange={(e: any) => setLugar(e.detail.value)}
                             />
-                            <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                multiple
-                                className='input-fields'
-                                onChange={handleImageUpload}
-                            />
+                            <ImageUploader onImageUpload={setBase64}  onError={(error)=>console.log(error)}/>
                             <IonButton className='button_form' shape='round' type='submit'>Registrar</IonButton>
                             <IonButton className='button_form' shape='round' type='button' onClick={() => { history.push('/Home') }} color={'danger'}>Cancelar</IonButton>
                         </form>

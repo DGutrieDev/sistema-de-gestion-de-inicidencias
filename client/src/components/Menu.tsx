@@ -14,13 +14,13 @@ import {
   IonText,
 } from '@ionic/react';
 
-import { useLocation } from 'react-router-dom';
 import { exitOutline, addCircleOutline, listCircleOutline } from 'ionicons/icons';
 import { IonFooter } from '@ionic/react';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import './Menu.css';
-
+import '../styles/Menu.css';
+import { useHistory } from 'react-router';
+import { useAuth } from '../Auth/authContext';
 interface User {
   nombre: string;
   correo: string;
@@ -36,18 +36,30 @@ interface Roles {
 }
 
 const Menu: React.FC = () => {
-  const location = useLocation();
   const [user, setUser] = useState<User | string | null>(null);
   const Host = import.meta.env.VITE_BASE_URL;
+  const { Logout, isAuthenticated, usuario } = useAuth();
+  const history = useHistory();
 
   async function getUser() {
-    const response = await axios.get(`${Host}/usuarios/informacionUsuario/702730905`);
+    const response = await axios.get(`${Host}/usuarios/informacionUsuario/${usuario}`);
     setUser(response.data.data);
   }
 
   useEffect(() => {
-    getUser();
-  }, []);
+    if (isAuthenticated && usuario) {
+      getUser();
+    }
+  }, [isAuthenticated, usuario]);
+
+  const handleLogout = () => {
+    Logout();
+    history.push('/login');
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <IonMenu contentId="main" type="reveal">
@@ -72,7 +84,7 @@ const Menu: React.FC = () => {
           <IonList id="labels-list">
             <IonNote>Roles de Usuario</IonNote>
             {user.roles.map((rol, index) => (
-              <IonItem key={index}>
+              <IonItem key={index} lines='none'>
                 {rol.CT_id_Rol === '1' ? (
                   <>
                     {/* Add your code here */}
@@ -81,21 +93,24 @@ const Menu: React.FC = () => {
                 {rol.CT_id_Rol === '2' ? (
                   <>
                     <IonMenuToggle autoHide={false}>
-                      <IonNote>Usuario</IonNote>
+                      <br />
+                      <IonNote>
+                        {rol.CT_desc_rol}
+                      </IonNote>
                       <IonItem
                         routerLink="/registrarIncidencias"
                         routerDirection="none"
-                        detail={false}
+                        detail={true}
+                        lines='none'
                       >
-                        <IonIcon slot="start" icon={addCircleOutline} />
-                        Registrar Incidencias
+                        Nueva Incidencias
                       </IonItem>
                       <IonItem
                         routerLink="/registrarIncidencias"
                         routerDirection="none"
-                        detail={false}
+                        detail={true}
+                        lines='none'
                       >
-                        <IonIcon slot="start" icon={listCircleOutline} />
                         Listar Incidencias
                       </IonItem>
                     </IonMenuToggle>
@@ -103,12 +118,54 @@ const Menu: React.FC = () => {
                 ) : null}
                 {rol.CT_id_Rol === '3' ? (
                   <>
-                    {/* Add your code here */}
+                    <IonMenuToggle autoHide={false}>
+                      <br />
+                      <IonNote>
+                        {rol.CT_desc_rol}
+                      </IonNote>
+                      <IonItem
+                        routerLink="/asignarIncidencias"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Asignar Incidencias
+                      </IonItem>
+                      <IonItem
+                        routerLink="/registrarIncidencias"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Listar Incidencias Asignadas
+                      </IonItem>
+                    </IonMenuToggle>
                   </>
                 ) : null}
                 {rol.CT_id_Rol === '4' ? (
                   <>
-                    {/* Add your code here */}
+                    <IonMenuToggle autoHide={false}>
+                      <br />
+                      <IonNote>
+                        {rol.CT_desc_rol}
+                      </IonNote>
+                      <IonItem
+                        routerLink="/registrarDiagnosticos"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Registrar Diagnosticos
+                      </IonItem>
+                      <IonItem
+                        routerLink="/registrarIncidencias"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Listar Incidencias Asignadas
+                      </IonItem>
+                    </IonMenuToggle>
                   </>
                 ) : null}
                 {rol.CT_id_Rol === '5' ? (
@@ -122,33 +179,34 @@ const Menu: React.FC = () => {
         ) :
           <IonList id="labels-list">
             <IonNote>Roles de Usuario</IonNote>
-            <IonItem>
-              <>
-                <IonMenuToggle autoHide={false}>
-                  <IonNote>Usuario</IonNote>
-                  <IonItem
-                    routerLink="/registrarIncidencias"
-                    routerDirection="none"
-                    detail={false}
-                  >
-                    <IonIcon slot="start" icon={addCircleOutline} />
-                    Registrar Incidencias
-                  </IonItem>
-                  <IonItem
-                    routerLink="/registrarIncidencias"
-                    routerDirection="none"
-                    detail={false}
-                  >
-                    <IonIcon slot="start" icon={listCircleOutline} />
-                    Listar Incidencias
-                  </IonItem>
-                </IonMenuToggle>
-              </>
+            <IonItem lines='none'>
+              <IonMenuToggle autoHide={false}>
+                <br />
+                <IonNote>
+                  Prueba
+                </IonNote>
+                <IonItem
+                  routerLink="/registrarDiagnosticos"
+                  routerDirection="none"
+                  detail={true}
+                  lines='none'
+                >
+                  Registrar Diagnosticos
+                </IonItem>
+                <IonItem
+                  routerLink="/registrarIncidencias"
+                  routerDirection="none"
+                  detail={true}
+                  lines='none'
+                >
+                  Listar Incidencias Asignadas
+                </IonItem>
+              </IonMenuToggle>
             </IonItem>
           </IonList>}
       </IonContent>
       <IonFooter className="footer-toolbar">
-        <IonButton color={'danger'} className='exit_button'>
+        <IonButton color={'danger'} className='exit_button' onClick={handleLogout}>
           <IonIcon slot="start" icon={exitOutline} />
           Cerrar Sesión
         </IonButton>

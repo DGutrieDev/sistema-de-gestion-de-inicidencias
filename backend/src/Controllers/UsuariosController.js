@@ -7,7 +7,7 @@ async function crearIncidencias(req, res) {
     try {
         const { usuario, titulo, descripcion, lugar, imagen } = req.body;
         const cod_Incidencia = codIncidencias((await Incidencias.count()) + 1);
-        const fecha = moment().tz("America/Costa_Rica").format("DD-MM-YYYY HH:mm:ss")
+        const fecha = moment().tz("America/Costa_Rica").format("DD-MM-YYYY HH:mm:ss");
         if (!usuario || !titulo || !descripcion || !lugar) {
             return res.status(400).json({ message: "Faltan datos" });
         }
@@ -35,11 +35,12 @@ async function crearIncidencias(req, res) {
                 CT_cod_imagen: codImagen(cant_imagenes + 1, incidencia.CT_cod_incidencia),
                 CI_imagen: imagen
             });
+
+            const Imagen_Incidencia = await Incidencia_imagen.create({
+                CT_cod_incidencia: incidencia.CT_cod_incidencia,
+                CT_cod_imagen: codImagen(cant_imagenes + 1, incidencia.CT_cod_incidencia)
+            })
         }
-        const Incidencia_imagen = await Incidencia_imagen.create({
-            CT_cod_incidencia: incidencia.CT_cod_incidencia,
-            CT_cod_imagen: codImagen(cant_imagenes + 1, incidencia.CT_cod_incidencia)
-        })
         if (incidencia) {
             creadorIncidencia(usuario, cod_Incidencia);
             IncidenciaRegistrada(

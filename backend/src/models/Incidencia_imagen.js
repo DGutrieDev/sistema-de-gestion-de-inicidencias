@@ -29,7 +29,7 @@ const Imagen_Incidencia = sequelize.define(
         },
         CT_cod_diagnostico: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: Diagnostico,
                 key: "CT_cod_diagnostico",
