@@ -40,3 +40,15 @@
 .input-fields:last-child{
     margin-bottom: 0px;
 }
+
+.button_form{
+    margin: 0; 
+    width: 85%;
+    height: 40px;
+    color: white;
+}
+
+.button_form[type="submit"]{
+    margin-bottom: 15px;
+}
+

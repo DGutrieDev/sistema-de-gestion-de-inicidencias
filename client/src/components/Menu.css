@@ -17,7 +17,8 @@ ion-menu.md ion-note {
   margin-bottom: 30px;
 }
 
-ion-menu.md ion-list-header, ion-menu.md ion-note {
+ion-menu.md ion-list-header,
+ion-menu.md ion-note {
   padding-left: 10px;
 }
 
@@ -110,4 +111,47 @@ ion-note {
 
 ion-item.selected {
   --color: var(--ion-color-primary);
-} 
+}
+
+.footer-toolbar {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.footer-toolbar ion-button {
+  width: 100%;
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.menu_header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.menu_header_info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-bottom: 0;
+}
+
+.exit_button {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.sub-list {
+  padding-left: 16px;
+}
+
+.sub-list ion-item {
+  --padding-start: 0;
+  --inner-padding-start: 16px;
+}

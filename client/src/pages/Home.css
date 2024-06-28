@@ -5,6 +5,7 @@ body{
   padding: 0;
   font-family: 'Roboto', sans-serif;
 }
+
 .Logo {
   width: 150px;
   margin-left: 55%;
@@ -12,70 +13,57 @@ body{
 
 .btn_menu {
   margin-bottom: 30px;
-}
-
-.container {
-  height: 100vh;
-  width: 100%;
-}
-
-.container h1 {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-left: 25px;
-  color: rgb(0, 160, 205);
+  margin-left: 0;
+  margin-right: 25px;
+  font-size: 28px;
 }
 
 .custom-header {
   height: 64px; 
 }
 
-.custom-toolbar {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.op_container{
-  width: 100%;
-  height: fit-content;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 10px;
-}
-
-.opciones{
+.btns{
+  width: 20%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 80%;
-  height: 70px;
-  margin-bottom: 10px;
 }
 
-.opciones:first-child{
-  margin-left: 15px;
-}
-
-.btn_modal{
+.custom-toolbar {
   width: 100%;
   height: 100%;
-  color: black;
-  font-size: 12px;
-  font-weight: 500;
-  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.583);
-  border-radius: 20px;
-  letter-spacing: 0.5px;
+  display: flex;
+}
+
+
+.home_content{
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home_content img{
+  margin-top: 100px;
+}
+
+.home_info{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+  .btn_menu {
+    color: #000;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   .btn_menu {
     color: #fff;
-  }
-
-  .btn_modal{
-    color: #fff;
-    box-shadow: 0 0 6px 0 rgba(255, 255, 255, 0.583);
   }
 }

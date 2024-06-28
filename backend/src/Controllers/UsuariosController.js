@@ -36,6 +36,10 @@ async function crearIncidencias(req, res) {
                 CI_imagen: imagen
             });
         }
+        const Incidencia_imagen = await Incidencia_imagen.create({
+            CT_cod_incidencia: incidencia.CT_cod_incidencia,
+            CT_cod_imagen: codImagen(cant_imagenes + 1, incidencia.CT_cod_incidencia)
+        })
         if (incidencia) {
             creadorIncidencia(usuario, cod_Incidencia);
             IncidenciaRegistrada(

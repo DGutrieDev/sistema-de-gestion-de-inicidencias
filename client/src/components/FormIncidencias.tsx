@@ -1,24 +1,46 @@
 import React, { useState } from 'react';
-import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol } from '@ionic/react';
+import { useHistory } from 'react-router';
+import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonNote } from '@ionic/react';
 import axios from 'axios';
 import '../styles/formularios.css';
 
-interface FormIncidenciasProps {
-    closeForm: () => void;
-}
 
-const FormIncidencias: React.FC<FormIncidenciasProps> = ({ closeForm }) => {
+const FormIncidencias: React.FC = () => {
+    // State hooks
     const [toastMessage, setToastMessage] = useState<string>('');
     const [showToast, setShowToast] = useState<boolean>(false);
     const [toastStateColor, setToastStateColor] = useState<string>('');
+    const [base64, setBase64] = useState<string[]>([]);
+    const [base64Error, setBase64Error] = useState<string | null>(null);
+    const [titulo, setTitulo] = useState<string>('');
+    const [descrip, setDescrip] = useState<string>('');
+    const [lugar, setLugar] = useState<string>('');
+
+    // History hook
+    const history = useHistory();
+    const Host = import.meta.env.VITE_BASE_URL;
+
+    const handleImageUpload = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setBase64(reader.result as unknown as string[]);
+            };
+            reader.onerror = () => {
+                setBase64Error("Error reading file");
+            };
+            reader.readAsDataURL(file);
+            console.log(base64);
+        } else {
+            setBase64Error("No file selected");
+            console.log(base64Error);
+        }
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const titulo = (document.querySelector('input[name="titulo"]') as HTMLInputElement).value;
-            const descrip = (document.querySelector('textarea[name="descripcion"]') as HTMLTextAreaElement).value;
-            const lugar = (document.querySelector('input[name="lugar"]') as HTMLInputElement).value;
-
             if (!titulo || !descrip || !lugar) {
                 setToastStateColor('danger');
                 setToastMessage('Todos los campos son requeridos.');
@@ -26,11 +48,12 @@ const FormIncidencias: React.FC<FormIncidenciasProps> = ({ closeForm }) => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:3000/api/incidencias/crear', {
-                usuario: localStorage.getItem('usuario'),
+            const response = await axios.post(`${Host}/usuarios/crearIncidencias`, {
+                usuario: "702730905",
                 titulo: titulo,
-                descrip: descrip,
+                descripcion: descrip,
                 lugar: lugar,
+                imagen: base64 || null
             });
 
             if (response.status === 201) {
@@ -39,7 +62,7 @@ const FormIncidencias: React.FC<FormIncidenciasProps> = ({ closeForm }) => {
                 setShowToast(true);
                 setTimeout(() => {
                     setShowToast(false);
-                    closeForm();
+                    history.push('/Home');
                 }, 1000);
             } else {
                 setToastStateColor('danger');
@@ -56,26 +79,48 @@ const FormIncidencias: React.FC<FormIncidenciasProps> = ({ closeForm }) => {
 
     return (
         <IonPage>
+            <IonHeader className='custom-header'>
+                <IonToolbar className='custom-toolbar'>
+                    <IonButtons slot="start" className='btns'>
+                        <IonMenuButton className='btn_menu' />
+                    </IonButtons>
+                </IonToolbar>
+            </IonHeader>
             <IonContent>
                 <IonRow>
                     <IonCol size='12' sizeMd='6'>
+                        <br />
+                        <IonNote className='note'>Registrar Incidencias</IonNote>
+                        <br />
                         <form className='form_incidencias' onSubmit={handleSubmit}>
                             <IonInput
                                 name='titulo'
                                 className='input-fields'
                                 placeholder='Titulo de Incidencia'
+                                onIonChange={(e: any) => setTitulo(e.detail.value)}
                             />
                             <IonTextarea
                                 name='descripcion'
                                 className='text-area-field'
                                 placeholder='Descripcion de Incidencia'
+                                onIonChange={(e: any) => setDescrip(e.detail.value)}
                             />
                             <IonInput
                                 name='lugar'
                                 className='input-fields'
                                 placeholder='Lugar de Incidencia'
+                                onIonChange={(e: any) => setLugar(e.detail.value)}
                             />
-                            <IonButton className='button' shape='round' type='submit'>Registrar</IonButton>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                multiple
+                                className='input-fields'
+                                onChange={handleImageUpload}
+                            />
+                            <IonButton className='button_form' shape='round' type='submit'>Registrar</IonButton>
+                            <IonButton className='button_form' shape='round' type='button' onClick={() => { history.push('/Home') }} color={'danger'}>Cancelar</IonButton>
                         </form>
                     </IonCol>
                 </IonRow>

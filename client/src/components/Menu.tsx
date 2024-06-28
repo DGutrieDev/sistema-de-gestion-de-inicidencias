@@ -1,4 +1,6 @@
 import {
+  IonButton,
+  IonCol,
   IonContent,
   IonIcon,
   IonItem,
@@ -8,91 +10,149 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
+  IonRow,
+  IonText,
 } from '@ionic/react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, bookmarkOutline, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+import { exitOutline, addCircleOutline, listCircleOutline } from 'ionicons/icons';
+import { IonFooter } from '@ionic/react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import './Menu.css';
 
-interface AppPage {
-  url: string;
-  iosIcon: string;
-  mdIcon: string;
-  title: string;
+interface User {
+  nombre: string;
+  correo: string;
+  apellidoUno: string;
+  apellidoDos: string;
+  puesto: string;
+  roles: Roles[];
 }
 
-const appPages: AppPage[] = [
-  {
-    title: 'Inbox',
-    url: '/folder/Inbox',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp
-  },
-  {
-    title: 'Outbox',
-    url: '/folder/Outbox',
-    iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp
-  },
-  {
-    title: 'Favorites',
-    url: '/folder/Favorites',
-    iosIcon: heartOutline,
-    mdIcon: heartSharp
-  },
-  {
-    title: 'Archived',
-    url: '/folder/Archived',
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp
-  },
-  {
-    title: 'Trash',
-    url: '/folder/Trash',
-    iosIcon: trashOutline,
-    mdIcon: trashSharp
-  },
-  {
-    title: 'Spam',
-    url: '/folder/Spam',
-    iosIcon: warningOutline,
-    mdIcon: warningSharp
-  }
-];
-
-const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+interface Roles {
+  CT_id_Rol: string;
+  CT_desc_rol: string;
+}
 
 const Menu: React.FC = () => {
   const location = useLocation();
+  const [user, setUser] = useState<User | string | null>(null);
+  const Host = import.meta.env.VITE_BASE_URL;
+
+  async function getUser() {
+    const response = await axios.get(`${Host}/usuarios/informacionUsuario/702730905`);
+    setUser(response.data.data);
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
-    <IonMenu contentId="main" type="overlay">
+    <IonMenu contentId="main" type="reveal">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Inbox</IonListHeader>
-          <IonNote>hi@ionicframework.com</IonNote>
-          {appPages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
-                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
-                  <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
-                  <IonLabel>{appPage.title}</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            );
-          })}
+          {user && typeof user !== 'string' ? (
+            <>
+              <IonListHeader>{user.nombre} {user.apellidoUno} {user.apellidoDos}</IonListHeader>
+              <br />
+              <IonNote>{user.puesto}</IonNote>
+            </>
+          ) : (
+            <>
+              <IonListHeader>Denny Gutrie Arguedas</IonListHeader>
+              <br />
+              <IonNote>Desarrollador</IonNote>
+            </>
+          )}
+          <IonNote>UCR</IonNote>
         </IonList>
-
-        <IonList id="labels-list">
-          <IonListHeader>Labels</IonListHeader>
-          {labels.map((label, index) => (
-            <IonItem lines="none" key={index}>
-              <IonIcon aria-hidden="true" slot="start" icon={bookmarkOutline} />
-              <IonLabel>{label}</IonLabel>
+        {user && typeof user !== 'string' ? (
+          <IonList id="labels-list">
+            <IonNote>Roles de Usuario</IonNote>
+            {user.roles.map((rol, index) => (
+              <IonItem key={index}>
+                {rol.CT_id_Rol === '1' ? (
+                  <>
+                    {/* Add your code here */}
+                  </>
+                ) : null}
+                {rol.CT_id_Rol === '2' ? (
+                  <>
+                    <IonMenuToggle autoHide={false}>
+                      <IonNote>Usuario</IonNote>
+                      <IonItem
+                        routerLink="/registrarIncidencias"
+                        routerDirection="none"
+                        detail={false}
+                      >
+                        <IonIcon slot="start" icon={addCircleOutline} />
+                        Registrar Incidencias
+                      </IonItem>
+                      <IonItem
+                        routerLink="/registrarIncidencias"
+                        routerDirection="none"
+                        detail={false}
+                      >
+                        <IonIcon slot="start" icon={listCircleOutline} />
+                        Listar Incidencias
+                      </IonItem>
+                    </IonMenuToggle>
+                  </>
+                ) : null}
+                {rol.CT_id_Rol === '3' ? (
+                  <>
+                    {/* Add your code here */}
+                  </>
+                ) : null}
+                {rol.CT_id_Rol === '4' ? (
+                  <>
+                    {/* Add your code here */}
+                  </>
+                ) : null}
+                {rol.CT_id_Rol === '5' ? (
+                  <>
+                    {/* Add your code here */}
+                  </>
+                ) : null}
+              </IonItem>
+            ))}
+          </IonList>
+        ) :
+          <IonList id="labels-list">
+            <IonNote>Roles de Usuario</IonNote>
+            <IonItem>
+              <>
+                <IonMenuToggle autoHide={false}>
+                  <IonNote>Usuario</IonNote>
+                  <IonItem
+                    routerLink="/registrarIncidencias"
+                    routerDirection="none"
+                    detail={false}
+                  >
+                    <IonIcon slot="start" icon={addCircleOutline} />
+                    Registrar Incidencias
+                  </IonItem>
+                  <IonItem
+                    routerLink="/registrarIncidencias"
+                    routerDirection="none"
+                    detail={false}
+                  >
+                    <IonIcon slot="start" icon={listCircleOutline} />
+                    Listar Incidencias
+                  </IonItem>
+                </IonMenuToggle>
+              </>
             </IonItem>
-          ))}
-        </IonList>
+          </IonList>}
       </IonContent>
+      <IonFooter className="footer-toolbar">
+        <IonButton color={'danger'} className='exit_button'>
+          <IonIcon slot="start" icon={exitOutline} />
+          Cerrar Sesión
+        </IonButton>
+      </IonFooter>
     </IonMenu>
   );
 };
