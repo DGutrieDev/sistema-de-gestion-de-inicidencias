@@ -132,7 +132,7 @@ const Listado_IncidenciasAsignadas: React.FC = () => {
                 ) : (
                     <div className="informacion">
                         <IonIcon icon={closeOutline} className="icono" />
-                        <h2>No tienes incidencias asignadas</h2>
+                        <h3>No tienes incidencias asignadas</h3>
                     </div>
                 )}
                 <ModalDiagnosticos open={selectedIncidenciaId !== null} onClose={() => setSelectedIncidenciaId(null)} id={selectedIncidenciaId || ""} />

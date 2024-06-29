@@ -22,10 +22,10 @@ const Login: React.FunctionComponent<{}> = () => {
                 contraseña: contraseña
             });
            if(res.status === 200){
-               setTimeout(() => {
                     Login(res.data.data.token, res.data.data.id_usuario);
+                    setUsuario('');
+                    setContraseña('')
                     history.push('/Home');
-                }, 1000);
            }
         }catch(e){
             console.log(e);
@@ -46,6 +46,7 @@ const Login: React.FunctionComponent<{}> = () => {
                                     <IonInput
                                         name="nombre_usuario"
                                         className="login_fields" placeholder="Correo o Identificacion"
+                                        value={usuario}
                                         onIonChange={(e) => setUsuario(e.detail.value!)}>
                                         <div slot="label">
                                             <IonIcon icon={personOutline} className="icon"></IonIcon>
@@ -55,6 +56,7 @@ const Login: React.FunctionComponent<{}> = () => {
                                         name="contrasena_usuario"
                                         type="password"
                                         className="login_fields" placeholder="Contraseña"
+                                        value={contraseña}
                                         onIonChange={(e) => setContraseña(e.detail.value!)}>
                                         <div slot="label">
                                             <IonIcon icon={lockClosedOutline} className="icon"></IonIcon>

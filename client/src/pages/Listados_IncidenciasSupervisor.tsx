@@ -124,7 +124,7 @@ const Listados_IncidenciasSupervisor: React.FC = () => {
                 ) : (
                     <div className="informacion">
                         <IonIcon icon={closeOutline} className="icono" />
-                        <h2>No hay Incidencias</h2>
+                        <h3>No hay Incidencias</h3>
                     </div>
                 )}
 

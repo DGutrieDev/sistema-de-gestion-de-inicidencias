@@ -188,48 +188,13 @@ const Menu: React.FC = () => {
                       >
                         Listar Incidencias Terminadas
                       </IonItem>
-                      <IonItem
-                        routerLink="/listadoIncidenciasSupervisor"
-                        routerDirection="none"
-                        detail={true}
-                        lines='none'
-                      >
-                        Listar Incidencias Cerradas
-                      </IonItem>
                     </IonMenuToggle>
                   </>
                 ) : null}
               </IonItem>
             ))}
           </IonList>
-        ) :
-          <IonList id="labels-list">
-            <IonNote>Roles de Usuario</IonNote>
-            <IonItem lines='none'>
-              <IonMenuToggle autoHide={false}>
-                <br />
-                <IonNote>
-                  Prueba
-                </IonNote>
-                <IonItem
-                  routerLink="/registrarDiagnosticos"
-                  routerDirection="none"
-                  detail={true}
-                  lines='none'
-                >
-                  Registrar Diagnosticos
-                </IonItem>
-                <IonItem
-                  routerLink="/registrarIncidencias"
-                  routerDirection="none"
-                  detail={true}
-                  lines='none'
-                >
-                  Listar Incidencias Asignadas
-                </IonItem>
-              </IonMenuToggle>
-            </IonItem>
-          </IonList>}
+        ) : <></>}
       </IonContent>
       <IonFooter className="footer-toolbar">
         <IonButton color={'danger'} className='exit_button' onClick={handleLogout}>

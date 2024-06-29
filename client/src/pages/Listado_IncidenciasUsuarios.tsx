@@ -98,7 +98,7 @@ const Listado_IncidenciasUsuarios: React.FC = () => {
                 ) : (
                     <div className="informacion">
                         <IonIcon icon={closeOutline} className="icono" />
-                        <h2>No tienes incidencias registradas</h2>
+                        <h3>No tienes incidencias registradas</h3>
                     </div>
                 )}
             </IonContent>

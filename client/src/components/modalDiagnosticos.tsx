@@ -78,7 +78,7 @@ const ModalDiagnosticos: React.FC<ModalProps> = ({ open, onClose, id }) => {
                 ) : (
                     <div className="informacion">
                         <IonIcon icon={closeOutline} className="icono" />
-                        <h2>No tienes incidencias asignadas</h2>
+                        <h4>La incidencia no tiene diagnosticos</h4>
                     </div>
                 )}
             </IonContent>

@@ -89,12 +89,14 @@ const FormDiagnostico: React.FC = () => {
                             >
                                 {incidencias && incidencias.length > 0 ? (
                                     incidencias.map((incidencia: any) => (
-                                        <IonSelectOption
-                                            key={incidencia.CT_cod_incidencia}
-                                            value={incidencia.CT_cod_incidencia}
-                                        >
-                                            {incidencia.CT_cod_incidencia} - {incidencia.CT_titulo}
-                                        </IonSelectOption>
+                                        incidencia.CT_Estado === 'En reparación' ? (
+                                            <IonSelectOption
+                                                key={incidencia.CT_cod_incidencia}
+                                                value={incidencia.CT_cod_incidencia}
+                                            >
+                                                {incidencia.CT_cod_incidencia} - {incidencia.CT_titulo}
+                                            </IonSelectOption>
+                                        ) : null
                                     ))
                                 ) : (
                                     <IonSelectOption value=''></IonSelectOption>
