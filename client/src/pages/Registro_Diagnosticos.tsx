@@ -21,24 +21,21 @@ const FormDiagnostico: React.FC = () => {
     const history = useHistory();
     const { isAuthenticated, usuario } = useAuth();
 
-    
+
     async function cargarIncidencias() {
         try {
             const response = await axios.get(`${Host}/tecnicos/incidencias/${usuario}`);
-            setIncidencias(response.data);
+            setIncidencias(response.data.data);
+            console.log(response.data.data);
         } catch (error) {
             console.log(error);
         }
     }
-    
     useEffect(() => {
-        if(isAuthenticated && usuario) cargarIncidencias();
+        if (isAuthenticated && usuario) {
+            cargarIncidencias();
+        }
     }, [isAuthenticated, usuario]);
-    
-    if (!isAuthenticated) {
-        history.push('/Login');
-        return null;
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,7 +47,7 @@ const FormDiagnostico: React.FC = () => {
                 observaciones: observaciones,
                 requiere_compra: compra
             });
-            if (res.status === 200) {
+            if (res.status === 201) {
                 setToastStateColor('success');
                 setToastMessage('Diagnostico registrado exitosamente.');
                 setShowToast(true);
@@ -85,16 +82,21 @@ const FormDiagnostico: React.FC = () => {
                             <IonSelect
                                 name='incidencia'
                                 className='input-fields'
-                                interface='popover'
                                 label='Incidencia'
                                 onIonChange={(e) => setIncidencia(e.detail.value)}
                             >
-                                {incidencias.map((incidencia: any) => (
-                                    <IonSelectOption
-                                        key={incidencia.CT_cod_incidencia}
-                                        value={incidencia.CT_cod_incidencia}
-                                    >{incidencia.CT_cod_incidencia} - {incidencia.CT_titulo}</IonSelectOption>
-                                ))}
+                                {incidencias && incidencias.length > 0 ? (
+                                    incidencias.map((incidencia: any) => (
+                                        <IonSelectOption
+                                            key={incidencia.CT_cod_incidencia}
+                                            value={incidencia.CT_cod_incidencia}
+                                        >
+                                            {incidencia.CT_cod_incidencia} - {incidencia.CT_titulo}
+                                        </IonSelectOption>
+                                    ))
+                                ) : (
+                                    <IonSelectOption value=''></IonSelectOption>
+                                )}
                             </IonSelect>
                             <IonInput
                                 name='diagnostico'
@@ -120,14 +122,6 @@ const FormDiagnostico: React.FC = () => {
                                 placeholder='Requiere compra? (Si / No)'
                                 onIonChange={(e) => setCompra(e.detail.value!)}
                             ></IonInput>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                multiple
-                                className='input-fields'
-                                onChange={(e) => { console.log(e.target.files) }}
-                            />
                             <IonButton className='button_form' shape='round' type='submit'>Registrar</IonButton>
                             <IonButton className='button_form' shape='round' type='button' onClick={() => { history.push('/Home') }} color={'danger'}>Cancelar</IonButton>
                         </form>

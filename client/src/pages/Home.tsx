@@ -17,7 +17,6 @@ interface User {
 const Home: React.FC = () => {
     const { isAuthenticated, usuario } = useAuth();
     const [user, setUser] = useState<User | string | null>(null);
-    const actualDate = (new Date().getDay() + 1) + '/' + (new Date().getMonth() + 1) + '/' + new Date().getFullYear();
     const Host = import.meta.env.VITE_BASE_URL;
     async function getUser() {
         const response = await axios.get(`${Host}/usuarios/informacionUsuario/${usuario}`);
@@ -43,13 +42,12 @@ const Home: React.FC = () => {
                 <div className="home_content">
                     <img src={Logo} className='Logo'></img>
                     <div className="home_info">
-                        <h1>Bienvenido !</h1>
+                        <h1>Bienvenido(a)</h1>
                         <br />
                         {user && typeof user !== 'string' ? (
                             <div>
                                 <h2>{user.nombre} {user.apellidoUno} {user.apellidoDos}</h2>
                                 <p>Sistema de Gestion de Incidencias</p>
-                                <p>{actualDate}</p>
                             </div>
                         ) : (
                             <>
@@ -57,7 +55,7 @@ const Home: React.FC = () => {
                                     Cargando información del usuario...
                                 </p>
                                 <p>
-                                    {actualDate}
+                                    Por favor espere...
                                 </p>
                             </>
                         )}

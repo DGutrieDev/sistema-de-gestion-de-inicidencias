@@ -25,14 +25,18 @@ const ImageUploader: React.FC<ImageUploadProps> = ({ onImageUpload, onError }) =
     };
 
     return (
-        <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            multiple
-            className='input-fields'
-            onChange={handleImageUpload}
-        />
+        <>
+            <br />
+            <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                multiple
+                className='input-fields'
+                onChange={handleImageUpload}
+            />
+            <br />
+        </>
     )
 }
 

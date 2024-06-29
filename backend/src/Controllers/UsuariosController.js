@@ -36,7 +36,7 @@ async function crearIncidencias(req, res) {
                 CI_imagen: imagen
             });
 
-            const Imagen_Incidencia = await Incidencia_imagen.create({
+            await Incidencia_imagen.create({
                 CT_cod_incidencia: incidencia.CT_cod_incidencia,
                 CT_cod_imagen: codImagen(cant_imagenes + 1, incidencia.CT_cod_incidencia)
             })
@@ -45,8 +45,8 @@ async function crearIncidencias(req, res) {
             creadorIncidencia(usuario, cod_Incidencia);
             IncidenciaRegistrada(
                 user.CT_usuario_institucional,
-                `${user.CT_nombre} ${user.CT_apellidoUno} ${user.CT_apellidoDos}`,
                 cod_Incidencia,
+                `${user.CT_nombre} ${user.CT_apellidoUno} ${user.CT_apellidoDos}`,
                 titulo
             );
             return res.status(201).json({ message: "Incidencia creada" });
@@ -67,7 +67,7 @@ async function obtenerIncidenciasUsuario(req, res) {
             }, include: [
                 {
                     model: Incidencias, include: [{ model: Estados }
-                        ,{ model: Incidencia_imagen, include: [{ model: Imagenes }] }
+                    ,{ model: Incidencia_imagen, include: [{ model: Imagenes }] }
                     ]
                 },
                 { model: Usuarios }
@@ -77,7 +77,7 @@ async function obtenerIncidenciasUsuario(req, res) {
             return res.status(404).json({ message: "No se encontraron incidencias" });
         }
         const data = incidenciascreadas.map((incidencia) => formatData(incidencia));
-        return res.status(200).json(data);
+        return res.status(200).json({data});
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Error en el servidor" });

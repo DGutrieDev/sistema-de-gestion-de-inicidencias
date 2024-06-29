@@ -22,10 +22,6 @@ const Diagnostico_Incidencias = sequelize.define('T_Diagnostico_Incidencias', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    CT_cod_imagen:{
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
 }, {timestamps: false , 
     tableName: "T_Diagnostico_Incidencias"
 });

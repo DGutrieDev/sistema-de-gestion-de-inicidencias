@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../sequelize_config");
+const Departamentos = require("./Departamentos");
 
 const Usuarios = sequelize.define(
   "T_Usuarios",
@@ -38,14 +39,33 @@ const Usuarios = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    CT_departamento: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      references: {
+        model: Departamentos,
+        key: "CT_id_Departamento",
+      },
+    },
     CT_Token: {
       type: DataTypes.STRING,
       allowNull: true,
     },
   },
-  { timestamps: false ,
+  {
+    timestamps: false,
     tableName: "T_Usuarios"
   }
 );
+
+Usuarios.belongsTo(Departamentos, {
+  foreignKey: "CT_departamento",
+  targetKey: "CT_id_Departamento",
+});
+
+Departamentos.hasMany(Usuarios, {
+  foreignKey: "CT_departamento",
+  sourceKey: "CT_id_Departamento",
+});
 
 module.exports = Usuarios;

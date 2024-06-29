@@ -27,14 +27,6 @@ const Imagen_Incidencia = sequelize.define(
                 key: "CT_cod_incidencia",
             },
         },
-        CT_cod_diagnostico: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: Diagnostico,
-                key: "CT_cod_diagnostico",
-            },
-        },
     }, {
         timestamps: false,
         tableName: "T_incidencia_imagenes",
@@ -59,16 +51,6 @@ Incidencia.hasMany(Imagen_Incidencia, {
 Imagen_Incidencia.belongsTo(Incidencia, {
     foreignKey: "CT_cod_incidencia",
     targetKey: "CT_cod_incidencia",
-});
-
-Diagnostico.hasMany(Imagen_Incidencia, {
-    foreignKey: "CT_cod_diagnostico",
-    sourceKey: "CT_cod_diagnostico",
-});
-
-Imagen_Incidencia.belongsTo(Diagnostico, {
-    foreignKey: "CT_cod_diagnostico",
-    targetKey: "CT_cod_diagnostico",
 });
 
 Imagen_Incidencia.sync();

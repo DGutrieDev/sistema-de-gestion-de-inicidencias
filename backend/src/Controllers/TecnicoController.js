@@ -55,22 +55,19 @@ async function obtenerIncidenciasAsignadas(req, res) {
                             model: Incidencia_imagen,
                             include: [
                                 {
-                                    model: Imagenes,
+                                    model: Imagenes
                                 }
                             ]
-                        }, {
-                            model: DiagnosticosIncidencias,
-                            attributes: [[sequelize.literal('(SELECT COUNT(*) FROM T_diagnostico_incidencias WHERE CT_cod_diagnostico = CT_cod_diagnostico)'), 'count']]
                         }
-                    ],
+                    ]
                 }
             ]
         });
         if (incidencias.length === 0) {
-            return res.status(404).json({ message: "No se encontraron incidencias asignadas" });
+            return res.status(200).json({ message: "No se encontraron incidencias asignadas" });
         }
         const data = formatData(incidencias);
-        return res.status(200).json(data);
+        return res.status(200).json({data});
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Error en el servidor" });
@@ -119,7 +116,6 @@ function formatData(incidencias) {
             CF_Fecha_Hora: T_Incidencia.CF_Fecha_Hora,
             CT_Estado: T_Incidencia.CT_Estado,
             Imagenes: T_Incidencia.T_incidencia_imagens.map(imagen => imagen.T_Imagene.CI_imagen),
-            Diagnosticos_count: T_Incidencia.T_Diagnostico_Incidencias.length
         };
     });
 }

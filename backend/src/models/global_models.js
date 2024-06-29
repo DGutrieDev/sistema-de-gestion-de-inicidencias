@@ -33,9 +33,9 @@ module.exports = {
   Prioridades,
   Riesgos,
   Roles,
-  Usuarios,
   UsuariosRoles,
   Bitacora_acciones,
   Bitacora_estados,
   Incidencia_imagen,
+  Usuarios,
 };

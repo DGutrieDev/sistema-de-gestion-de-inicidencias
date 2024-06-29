@@ -25,13 +25,40 @@ const FormIncidencias: React.FC = () => {
     const { isAuthenticated,usuario } = useAuth();
 
     if (!isAuthenticated){
-        history.push('/Login');
         return null;
     }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log(base64);
+        try{
+            if(!titulo || !descrip || !lugar){
+                setToastStateColor('danger');
+                setToastMessage('Por favor llene todos los campos');
+                setShowToast(true);
+                return;
+            }
+            const res = await axios.post(`${Host}/usuarios/crearIncidencias`, {
+                usuario: usuario,
+                titulo: titulo,
+                descripcion: descrip,
+                lugar: lugar,
+                imagen: base64 ? base64 : null
+            });
+            if(res.status === 201){
+                setToastStateColor('success');
+                setToastMessage('Incidencia registrada con exito');
+                setShowToast(true);
+                setTitulo('');
+                setDescrip('');
+                setLugar('');
+                setBase64(null);
+                setTimeout(() => {
+                    history.push('/Home');
+                }, 1000);
+            }
+        }catch(error){
+            console.log(error);
+        }
     };
 
     return (

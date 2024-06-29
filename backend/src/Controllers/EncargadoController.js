@@ -38,7 +38,8 @@ async function obtenerTecnicos(req, res) {
 
 async function asignarIncidencia(req, res) {
     try {
-        const { cod_Incidencia, ids_Tecnicos } = req.body;
+        const { cod_Incidencia, ids_Tecnicos, riesgo, categoria, prioridad, afectacion,duracion } = req.body;
+        console.log(ids_Tecnicos)
         for (const id of ids_Tecnicos) {
             const rol = await UsuariosRoles.findOne({
                 where: {
@@ -66,7 +67,19 @@ async function asignarIncidencia(req, res) {
                 CT_cod_usuario: id,
                 CT_id_incidencia: cod_Incidencia
             });
+            await Incidencias.update({
+                CT_Riesgo: riesgo,
+                CT_Categoria: categoria,
+                CT_Prioridad: prioridad,
+                CT_Afectacion: afectacion,
+                CF_Fecha_Estimada: duracion,
+                CT_Estado: 2
+            }, {
+                where: {
+                    CT_cod_incidencia: cod_Incidencia
+                }
 
+            })
             const tecnico = await Usuarios.findOne({
                 where: { CT_cedula: id }
             });
@@ -81,8 +94,7 @@ async function asignarIncidencia(req, res) {
                 `${incidencia.CT_cod_incidencia} - ${incidencia.CT_titulo}`
             );
         }
-
-        return res.status(200).json({ message: "Incidencia asignada correctamente" });
+        return res.status(201).json({ message: "Incidencia asignada correctamente" });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Error en el servidor" });
@@ -104,7 +116,7 @@ async function obtenerRiesgos(req, res) {
 async function obtenerCategorias(req, res) {
     try {
         const categorias = await Categorias.findAll(
-            { attributes: ['CT_cod_categoria', 'CT_descrip_categ']}
+            { attributes: ['CT_cod_categoria', 'CT_descrip_categ'] }
         );
         return res.status(200).json({ categorias });
     } catch (error) {
@@ -116,7 +128,7 @@ async function obtenerCategorias(req, res) {
 async function obtenerEstados(req, res) {
     try {
         const estados = await Estados.findAll(
-            { attributes: ['CT_cod_estado', 'CT_descrip_estado']}
+            { attributes: ['CT_cod_estado', 'CT_descrip_estado'] }
         );
         return res.status(200).json({ estados });
     } catch (error) {
@@ -128,7 +140,7 @@ async function obtenerEstados(req, res) {
 async function obtenerAfectaciones(req, res) {
     try {
         const afectaciones = await Afectaciones.findAll(
-            { attributes: ['CT_cod_afectacion', 'CT_descrip_afec']}
+            { attributes: ['CT_cod_afectacion', 'CT_descrip_afec'] }
         );
         return res.status(200).json({ afectaciones });
     } catch (error) {
@@ -140,7 +152,7 @@ async function obtenerAfectaciones(req, res) {
 async function obtenerPrioridades(req, res) {
     try {
         const prioridades = await Prioridades.findAll(
-            { attributes: ['CT_cod_prioridad', 'CT_descrip_prioridad']}
+            { attributes: ['CT_cod_prioridad', 'CT_descrip_prioridad'] }
         );
         return res.status(200).json({ prioridades });
     } catch (error) {

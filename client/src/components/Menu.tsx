@@ -82,7 +82,7 @@ const Menu: React.FC = () => {
         </IonList>
         {user && typeof user !== 'string' ? (
           <IonList id="labels-list">
-            <IonNote>Roles de Usuario</IonNote>
+            <IonNote>Roles</IonNote>
             {user.roles.map((rol, index) => (
               <IonItem key={index} lines='none'>
                 {rol.CT_id_Rol === '1' ? (
@@ -137,7 +137,7 @@ const Menu: React.FC = () => {
                         detail={true}
                         lines='none'
                       >
-                        Listar Incidencias Asignadas
+                        Listar Incidencias Registradas
                       </IonItem>
                     </IonMenuToggle>
                   </>

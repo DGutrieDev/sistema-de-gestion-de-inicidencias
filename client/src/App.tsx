@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import RegistrarIncidencias from './pages/Registro_Incidencias';
 import RegistrarDiagnosticos from './pages/Registro_Diagnosticos';
 import AsignarIncidencias from './pages/Asignar_Incidencias';
+import Listado_IncidenciasUsuarios from './pages/Listado_IncidenciasUsuarios';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -64,6 +65,9 @@ const App: React.FC = () => {
               </Route>
               <Route path="/asignarIncidencias" exact={true}>
                 <AsignarIncidencias />
+              </Route>
+              <Route path="/listadoIncidenciasUsuarios" exact={true}>
+                <Listado_IncidenciasUsuarios />
               </Route>
             </IonRouterOutlet>
           </IonSplitPane>

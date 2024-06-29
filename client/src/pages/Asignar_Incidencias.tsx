@@ -28,7 +28,27 @@ const Asignar_Incidencias: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(tecnico);
+        if (!incidencia || !tecnico || !prioridad_ || !categoria_ || !afectacion_ || !riesgo_ || !duracion) {
+            alert('Por favor llene todos los campos');
+            return;
+        }
+        try {
+            const res = await axios.post(`${Host}/encargados/asignar`, {
+                cod_Incidencia: incidencia,
+                ids_Tecnicos: tecnico,
+                prioridad: prioridad_,
+                categoria: categoria_,
+                afectacion: afectacion_,
+                riesgo: riesgo_,
+                duracion: duracion
+            });
+            if (res.status === 201) {
+                alert('Incidencia asignada con exito');
+                history.push('/Home');
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
