@@ -62,3 +62,5 @@ Bitacora_estados.belongsTo(Estados, {
     foreignKey: "CT_id_estado",
     targetKey: "CT_cod_estado",
 });
+
+module.exports = Bitacora_estados;

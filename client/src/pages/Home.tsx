@@ -29,6 +29,10 @@ const Home: React.FC = () => {
         }
     }, [isAuthenticated, usuario]);
 
+    if (!isAuthenticated) {
+        return null;
+    }
+
     return (
         <IonPage>
             <IonHeader className='custom-header'>

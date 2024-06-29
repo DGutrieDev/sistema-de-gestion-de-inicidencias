@@ -3,6 +3,7 @@ const UsuariosRoutes = require("./UsuariosRoutes");
 const EncargadoRoutes = require("./EncargadoRoutes");
 const TecnicoRoutes = require("./TecnicoRoutes");
 const AdministradoresRoutes = require("./AdministradorRoutes");
+const SupervisorRoutes = require("./SupervisorRoutes");
 
 module.exports = {
   SessionRoutes,
@@ -10,4 +11,5 @@ module.exports = {
   EncargadoRoutes,
   TecnicoRoutes,
   AdministradoresRoutes,
+  SupervisorRoutes,
 };

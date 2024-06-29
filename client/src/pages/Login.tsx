@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonInput, IonPage, IonRow } from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonInput, IonPage, IonRow, IonToast } from "@ionic/react";
 import { personOutline, lockClosedOutline } from "ionicons/icons";
 import { useState } from "react";
 import { useAuth } from "../Auth/authContext";
@@ -22,8 +22,10 @@ const Login: React.FunctionComponent<{}> = () => {
                 contraseña: contraseña
             });
            if(res.status === 200){
-                Login(res.data.data.token, res.data.data.id_usuario);
-                history.push('/Home');
+               setTimeout(() => {
+                    Login(res.data.data.token, res.data.data.id_usuario);
+                    history.push('/Home');
+                }, 1000);
            }
         }catch(e){
             console.log(e);

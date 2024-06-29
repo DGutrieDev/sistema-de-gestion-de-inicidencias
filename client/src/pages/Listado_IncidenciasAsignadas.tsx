@@ -23,6 +23,7 @@ import { homeOutline, closeOutline } from "ionicons/icons";
 import alt_image from "../assets/UCR.png";
 import ModalDiagnosticos from "../components/modalDiagnosticos";
 import "../styles/Listados.css";
+import { useAuth } from "../Auth/authContext";
 
 interface incidencia {
     CT_cod_incidencia: string;
@@ -42,11 +43,12 @@ interface incidencia {
 const Listado_IncidenciasAsignadas: React.FC = () => {
     const [incidencias, setIncidencias] = useState<incidencia[]>([]);
     const [selectedIncidenciaId, setSelectedIncidenciaId] = useState<string | null>(null);
+    const { isAuthenticated, usuario } = useAuth();
     const Host = import.meta.env.VITE_BASE_URL;
 
     const getIncidencias = async () => {
         const response = await axios.get(
-            `${Host}/tecnicos/incidencias/702730905`
+            `${Host}/tecnicos/incidencias/${usuario}`
         );
         setIncidencias(response.data.data);
     };
@@ -66,8 +68,15 @@ const Listado_IncidenciasAsignadas: React.FC = () => {
     };
 
     useIonViewWillEnter(() => {
-        getIncidencias();
+       if (isAuthenticated && usuario) {
+            getIncidencias();
+        }
     });
+
+
+    if (!isAuthenticated) {
+        return null;
+    }
 
     return (
         <IonPage>
@@ -84,9 +93,14 @@ const Listado_IncidenciasAsignadas: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
-                {incidencias.length > 0 ? (
+                {incidencias && incidencias.length > 0 ? (
                     incidencias.map((incidencia, index) => (
                         <IonCard key={index}>
+                            <img
+                                alt=""
+                                src={incidencia.Imagenes || alt_image}
+                                className="imagen_incd"
+                            />
                             <IonCardHeader>
                                 <IonCardTitle>{incidencia.CT_titulo}</IonCardTitle>
                                 <IonCardSubtitle>{incidencia.CT_Estado}</IonCardSubtitle>

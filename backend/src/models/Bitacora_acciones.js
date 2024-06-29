@@ -20,7 +20,7 @@ const Bitacora_acciones = sequelize.define(
                 key: "CT_cedula",
             },
         },
-        CT_id_Pantalla: {
+        CT_cod_pantalla: {
             type: DataTypes.STRING,
             allowNull: false,
             references: {

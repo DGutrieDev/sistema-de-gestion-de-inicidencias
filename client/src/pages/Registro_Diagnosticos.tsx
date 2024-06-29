@@ -26,7 +26,6 @@ const FormDiagnostico: React.FC = () => {
         try {
             const response = await axios.get(`${Host}/tecnicos/incidencias/${usuario}`);
             setIncidencias(response.data.data);
-            console.log(response.data.data);
         } catch (error) {
             console.log(error);
         }
@@ -37,6 +36,9 @@ const FormDiagnostico: React.FC = () => {
         }
     }, [isAuthenticated, usuario]);
 
+    if (!isAuthenticated) {
+        return null
+    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {

@@ -1,4 +1,4 @@
-const { Incidencias, Incidencia_Creada, Usuarios, UsuariosRoles, Estados, Roles, Imagenes, Incidencia_imagen } = require('../models/global_models');
+const { Incidencias, Incidencia_Creada, Usuarios, UsuariosRoles, Estados, Roles, Imagenes, Incidencia_imagen,Bitacora_acciones } = require('../models/global_models');
 const { codIncidencias, codImagen } = require('../Services/CodesGenerate_Service');
 const { IncidenciaRegistrada } = require('../Services/Email_Service');
 const moment = require('moment-timezone');
@@ -43,6 +43,11 @@ async function crearIncidencias(req, res) {
         }
         if (incidencia) {
             creadorIncidencia(usuario, cod_Incidencia);
+            await Bitacora_acciones.create({
+                CT_id_usuario: usuario,
+                CT_cod_pantalla: "002",
+                CT_logs: `registro incidencia ${cod_Incidencia}, usuario: ${user.CT_cedula},pantalal: 002`
+            });
             IncidenciaRegistrada(
                 user.CT_usuario_institucional,
                 cod_Incidencia,

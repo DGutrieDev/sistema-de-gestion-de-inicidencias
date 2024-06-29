@@ -52,8 +52,11 @@ const Menu: React.FC = () => {
     }
   }, [isAuthenticated, usuario]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Logout();
+    await axios.post(`${Host}/logout`,{
+      usuario: usuario
+    });
     history.push('/login');
   }
 
@@ -73,9 +76,6 @@ const Menu: React.FC = () => {
             </>
           ) : (
             <>
-              <IonListHeader>Denny Gutrie Arguedas</IonListHeader>
-              <br />
-              <IonNote>Desarrollador</IonNote>
             </>
           )}
           <IonNote>UCR</IonNote>
@@ -87,7 +87,20 @@ const Menu: React.FC = () => {
               <IonItem key={index} lines='none'>
                 {rol.CT_id_Rol === '1' ? (
                   <>
-                    {/* Add your code here */}
+                    <IonMenuToggle autoHide={false}>
+                      <br />
+                      <IonNote>
+                        {rol.CT_desc_rol}
+                      </IonNote>
+                      <IonItem
+                        routerLink="/registrarIncidencias"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Reportes de Cargas de Trabajo
+                      </IonItem>
+                    </IonMenuToggle>
                   </>
                 ) : null}
                 {rol.CT_id_Rol === '2' ? (
@@ -131,14 +144,6 @@ const Menu: React.FC = () => {
                       >
                         Asignar Incidencias
                       </IonItem>
-                      <IonItem
-                        routerLink="/registrarIncidencias"
-                        routerDirection="none"
-                        detail={true}
-                        lines='none'
-                      >
-                        Listar Incidencias Registradas
-                      </IonItem>
                     </IonMenuToggle>
                   </>
                 ) : null}
@@ -170,7 +175,28 @@ const Menu: React.FC = () => {
                 ) : null}
                 {rol.CT_id_Rol === '5' ? (
                   <>
-                    {/* Add your code here */}
+                    <IonMenuToggle autoHide={false}>
+                      <br />
+                      <IonNote>
+                        {rol.CT_desc_rol}
+                      </IonNote>
+                      <IonItem
+                        routerLink="/listadoIncidenciasSupervisor"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Listar Incidencias Terminadas
+                      </IonItem>
+                      <IonItem
+                        routerLink="/listadoIncidenciasSupervisor"
+                        routerDirection="none"
+                        detail={true}
+                        lines='none'
+                      >
+                        Listar Incidencias Cerradas
+                      </IonItem>
+                    </IonMenuToggle>
                   </>
                 ) : null}
               </IonItem>

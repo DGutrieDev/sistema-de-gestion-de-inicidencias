@@ -40,10 +40,10 @@ const Asignar_Incidencias: React.FC = () => {
                 categoria: categoria_,
                 afectacion: afectacion_,
                 riesgo: riesgo_,
-                duracion: duracion
+                duracion: duracion,
+                encargado: usuario
             });
             if (res.status === 201) {
-                alert('Incidencia asignada con exito');
                 history.push('/Home');
             }
         } catch (error) {
@@ -69,6 +69,10 @@ const Asignar_Incidencias: React.FC = () => {
         };
         if (isAuthenticated && usuario) fetchData();
     }, [isAuthenticated, usuario]);
+
+    if (!isAuthenticated) {
+        return null;
+    }
 
     return (
         <IonPage>

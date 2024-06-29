@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
-import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonNote } from '@ionic/react';
+import { IonContent, IonInput, IonTextarea, IonButton, IonToast, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonNote, useIonViewWillEnter } from '@ionic/react';
 import { useAuth } from '../Auth/authContext';
 import ImageUploader from "../components/ImageUploader";
 import axios from 'axios';
@@ -24,9 +24,12 @@ const FormIncidencias: React.FC = () => {
     // Auth hook
     const { isAuthenticated,usuario } = useAuth();
 
-    if (!isAuthenticated){
-        return null;
-    }
+    useIonViewWillEnter(() => {
+        setBase64(null);
+        setDescrip('');
+        setLugar('');
+        setTitulo('');
+    });
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -61,6 +64,10 @@ const FormIncidencias: React.FC = () => {
         }
     };
 
+    if (!isAuthenticated) {
+        return null;
+    }
+
     return (
         <IonPage>
             <IonHeader className='custom-header'>
@@ -81,18 +88,21 @@ const FormIncidencias: React.FC = () => {
                                 name='titulo'
                                 className='input-fields'
                                 placeholder='Titulo de Incidencia'
+                                value={titulo}
                                 onIonChange={(e: any) => setTitulo(e.detail.value)}
                             />
                             <IonTextarea
                                 name='descripcion'
                                 className='text-area-field'
                                 placeholder='Descripcion de Incidencia'
+                                value={descrip}
                                 onIonChange={(e: any) => setDescrip(e.detail.value)}
                             />
                             <IonInput
                                 name='lugar'
                                 className='input-fields'
                                 placeholder='Lugar de Incidencia'
+                                value={lugar}
                                 onIonChange={(e: any) => setLugar(e.detail.value)}
                             />
                             <ImageUploader onImageUpload={setBase64}  onError={(error)=>console.log(error)}/>

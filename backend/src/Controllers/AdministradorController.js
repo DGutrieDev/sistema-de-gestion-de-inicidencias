@@ -7,7 +7,6 @@ async function crearUsuarios(req, res) {
         const contrasenaAlternativa = correo.toString().split('@')[0];
         const existeUsuario = await Usuarios.findOne({ where: { CT_cedula: cedula } });
         if (existeUsuario) return res.status(400).json({ message: "El usuario ya existe" });
-        console.log(contrasenaAlternativa);
         const usuario = await Usuarios.create({
             CT_cedula: cedula,
             CT_nombre: nombre,

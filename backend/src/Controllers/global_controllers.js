@@ -3,6 +3,7 @@ const UsuariosController = require("./UsuariosController");
 const EncargadoController = require("./EncargadoController");
 const TecnicoController = require("./TecnicoController");
 const AdministradorController = require("./AdministradorController");
+const SupervisorController = require("./SupervisorController");
 
 module.exports = {
   SessionsController,
@@ -10,4 +11,5 @@ module.exports = {
   EncargadoController,
   TecnicoController,
   AdministradorController,
+  SupervisorController,
 };

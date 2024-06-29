@@ -1,4 +1,4 @@
-const { Roles, Incidencias, Incidencia_Asignada, Afectaciones, Estados, Categorias, Riesgos, UsuariosRoles, Usuarios, Prioridades } = require('../models/global_models');
+const { Roles, Incidencias, Incidencia_Asignada, Afectaciones, Estados, Categorias, Riesgos, UsuariosRoles, Usuarios, Prioridades,Bitacora_acciones,Bitacora_estados } = require('../models/global_models');
 const { EmailAsignacion } = require('../Services/Email_Service');
 const sequelize = require('sequelize');
 
@@ -38,8 +38,7 @@ async function obtenerTecnicos(req, res) {
 
 async function asignarIncidencia(req, res) {
     try {
-        const { cod_Incidencia, ids_Tecnicos, riesgo, categoria, prioridad, afectacion,duracion } = req.body;
-        console.log(ids_Tecnicos)
+        const { cod_Incidencia, ids_Tecnicos, riesgo, categoria, prioridad, afectacion,duracion,encargado } = req.body;
         for (const id of ids_Tecnicos) {
             const rol = await UsuariosRoles.findOne({
                 where: {
@@ -83,11 +82,20 @@ async function asignarIncidencia(req, res) {
             const tecnico = await Usuarios.findOne({
                 where: { CT_cedula: id }
             });
-
             const incidencia = await Incidencias.findOne({
                 where: { CT_cod_incidencia: cod_Incidencia }
             });
-
+            await Bitacora_acciones.create({
+                CT_id_usuario: encargado,
+                CT_cod_pantalla: "003",
+                CT_logs: `Incidencia ${incidencia.CT_cod_incidencia} asignada a ${tecnico.CT_nombre} ${tecnico.CT_apellidoUno} ${tecnico.CT_apellidoDos}, pantalla: 003, usuario: ${encargado}`
+            });
+            await Bitacora_estados.create({
+                CT_id_usuario: encargado,
+                CT_id_estado_anterior: 1,
+                CT_id_estado: 2,
+                CT_logs: `Cambio de estado de la incidencia ${incidencia.CT_cod_incidencia} de registrada a asignada`
+            });
             EmailAsignacion(
                 tecnico.CT_usuario_institucional,
                 `${tecnico.CT_nombre} ${tecnico.CT_apellidoUno} ${tecnico.CT_apellidoDos}`,
