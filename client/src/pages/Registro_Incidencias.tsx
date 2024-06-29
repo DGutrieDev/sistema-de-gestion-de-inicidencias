@@ -53,7 +53,7 @@ const FormIncidencias: React.FC = () => {
                 setLugar('');
                 setBase64(null);
                 setTimeout(() => {
-                    history.push('/Home');
+                    history.push('/listadoIncidenciasUsuarios');
                 }, 1000);
             }
         }catch(error){

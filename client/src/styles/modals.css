@@ -1,0 +1,17 @@
+.modal_toolbar {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.modal_toolbar ion-button {
+  width: 100%;
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+.close_btn{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}

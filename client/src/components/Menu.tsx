@@ -106,12 +106,12 @@ const Menu: React.FC = () => {
                         Nueva Incidencias
                       </IonItem>
                       <IonItem
-                        routerLink="/registrarIncidencias"
+                        routerLink="/listadoIncidenciasUsuarios"
                         routerDirection="none"
                         detail={true}
                         lines='none'
                       >
-                        Listar Incidencias
+                        Mis Incidencias
                       </IonItem>
                     </IonMenuToggle>
                   </>
@@ -158,7 +158,7 @@ const Menu: React.FC = () => {
                         Registrar Diagnosticos
                       </IonItem>
                       <IonItem
-                        routerLink="/registrarIncidencias"
+                        routerLink="/listadoIncidenciasAsignadas"
                         routerDirection="none"
                         detail={true}
                         lines='none'
